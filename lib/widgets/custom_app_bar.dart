@@ -46,6 +46,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
         widget.title,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
       leadingWidth: widget.showActions ? 140 : 100,
       leading: Padding(
         padding: const EdgeInsets.only(left: 16.0),

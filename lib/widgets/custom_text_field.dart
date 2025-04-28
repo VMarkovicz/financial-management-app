@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  final String label; 
+  final String label;
   final String hint;
   final bool isPassword;
   final bool isEmail;
@@ -30,10 +30,13 @@ class CustomTextField extends StatelessWidget {
           labelText: label,
           hintText: hint,
           focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blueGrey, width: 2.0),
+            borderSide: BorderSide(color: Colors.indigoAccent, width: 2.0),
           ),
           enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
+            borderSide: BorderSide(
+              color: Color.fromARGB(255, 178, 178, 178),
+              width: 1.0,
+            ),
           ),
         ),
       ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:financial_management_app/widgets/modal.dart';
+import 'package:financial_management_app/widgets/custom_text_field.dart';
+import 'package:financial_management_app/widgets/custom_button.dart';
 
 enum TransactionType { income, expense }
 
@@ -19,6 +22,54 @@ class Transaction extends StatelessWidget {
     required this.date,
     this.currency = 'USD',
   });
+
+  void _handleEdit(BuildContext context) {
+    final titleController = TextEditingController(text: title);
+    final descriptionController = TextEditingController(text: description);
+    final amountController = TextEditingController(text: amount.toString());
+
+    Modal.show(
+      context: context,
+      title: 'Edit Transaction',
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CustomTextField(
+            label: 'Title',
+            hint: 'Enter title',
+            controller: titleController,
+          ),
+          const SizedBox(height: 16),
+          CustomTextField(
+            label: 'Description',
+            hint: 'Enter description',
+            controller: descriptionController,
+          ),
+          const SizedBox(height: 16),
+          CustomTextField(
+            label: 'Amount',
+            hint: 'Enter amount',
+            controller: amountController,
+          ),
+        ],
+      ),
+      actions: [
+        CustomButton(
+          label: 'Cancel',
+          backgroundColor: ButtonType.ghost,
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        CustomButton(
+          label: 'Save',
+          width: 100,
+          onPressed: () {
+            // TODO: Implement save logic
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +121,7 @@ class Transaction extends StatelessWidget {
               onSelected: (value) {
                 switch (value) {
                   case 'edit':
-                    // TODO: Handle edit action
+                    _handleEdit(context);
                     break;
                   case 'delete':
                     // TODO: Handle delete action

@@ -56,9 +56,22 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: _getBackgoundColor(),
-          foregroundColor: Colors.white,
+          foregroundColor:
+              backgroundColor == ButtonType.ghost ? Colors.black : Colors.white,
+          elevation: 0,
+          surfaceTintColor:
+              backgroundColor == ButtonType.ghost ? Colors.transparent : null,
+          shadowColor:
+              backgroundColor == ButtonType.ghost ? Colors.transparent : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
+            side:
+                backgroundColor == ButtonType.ghost
+                    ? const BorderSide(
+                      color: Color.fromARGB(255, 203, 203, 203),
+                      width: 1.0,
+                    )
+                    : BorderSide.none,
           ),
         ),
         onPressed: onPressed,
@@ -67,7 +80,10 @@ class CustomButton extends StatelessWidget {
           style: TextStyle(
             fontSize: fontSize ?? 18,
             fontWeight: _getFontWeight(),
-            color: Colors.white,
+            color:
+                backgroundColor == ButtonType.ghost
+                    ? const Color(0xFF323232)
+                    : Colors.white,
           ),
         ),
       ),

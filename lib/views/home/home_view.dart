@@ -1,7 +1,10 @@
 import 'dart:math';
 
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
+import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_navigation_bar.dart';
+import 'package:financial_management_app/widgets/custom_text_field.dart';
+import 'package:financial_management_app/widgets/modal.dart';
 import 'package:financial_management_app/widgets/paper_container.dart';
 import 'package:financial_management_app/widgets/transaction.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +18,10 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   String _selectedCurrency = 'USD';
+
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final amountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +38,49 @@ class _HomeViewState extends State<HomeView> {
       ),
       bottomNavigationBar: const CustomNavigationBar(currentRoute: '/home'),
       floatingActionButton: FloatingActionButton(
+        elevation: 0,
         onPressed: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("Add Transaction")));
+          Modal.show(
+            context: context,
+            title: 'Create Transaction',
+            body: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomTextField(
+                  label: 'Title',
+                  hint: 'Enter title',
+                  controller: titleController,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Description',
+                  hint: 'Enter description',
+                  controller: descriptionController,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Amount',
+                  hint: 'Enter amount',
+                  controller: amountController,
+                ),
+              ],
+            ),
+            actions: [
+              CustomButton(
+                label: 'Cancel',
+                backgroundColor: ButtonType.ghost,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              CustomButton(
+                label: 'Save',
+                width: 100,
+                onPressed: () {
+                  // TODO: Implement save logic
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
         },
         backgroundColor: Color(0xFF68E093),
         child: const Icon(Icons.add, color: Colors.white),
