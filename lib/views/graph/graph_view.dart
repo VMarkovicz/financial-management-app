@@ -71,7 +71,7 @@ class _GraphViewState extends State<GraphView> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                 ),
                 Text(
-                  DateFormat.yMMMMd().format(DateTime.now()),
+                  _getWeekRange(),
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w100),
                 ),
               ],
@@ -98,7 +98,7 @@ class _GraphViewState extends State<GraphView> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                 ),
                 Text(
-                  DateFormat.yMMMMd().format(DateTime.now()),
+                  _getWeekRange(),
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w100),
                 ),
               ],
