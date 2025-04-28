@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
 
-enum ButtonType { 
-  primary, 
-  secondary, 
-  ghost 
-}
+enum ButtonType { primary, secondary, ghost }
 
-enum FontWeightType { 
-  thin,
-  normal, 
-  bold, 
-  extraBold 
-}
+enum FontWeightType { thin, normal, bold, extraBold }
 
 class CustomButton extends StatelessWidget {
   final String label;
