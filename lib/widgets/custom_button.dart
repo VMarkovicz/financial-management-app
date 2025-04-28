@@ -27,7 +27,7 @@ class CustomButton extends StatelessWidget {
   _getBackgoundColor() {
     switch (backgroundColor) {
       case ButtonType.primary:
-        return Colors.green;
+        return const Color(0xFF68E093);
       case ButtonType.secondary:
         return Colors.red;
       case ButtonType.ghost:
@@ -51,26 +51,26 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: width ?? double.infinity,
-        height: height ?? 50,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _getBackgoundColor(),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-            ),
-          ),
-          onPressed: onPressed,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: fontSize ?? 18,
-              fontWeight: _getFontWeight(),
-              color: Colors.white,
-            ),
+      width: width ?? double.infinity,
+      height: height ?? 50,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _getBackgoundColor(),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
         ),
-      );
+        onPressed: onPressed,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: fontSize ?? 18,
+            fontWeight: _getFontWeight(),
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 }

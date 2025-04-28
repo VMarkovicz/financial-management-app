@@ -37,6 +37,7 @@ dependencies:
   flutter_heatmap_calendar: ^1.0.5
   get: ^4.7.2
   google_fonts: ^6.2.1
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
