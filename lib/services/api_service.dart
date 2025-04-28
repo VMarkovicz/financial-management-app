@@ -5,7 +5,7 @@ import '../models/user_model.dart';
 const mockUserData = '''
 {
   "id": "1",
-  "name": "John Doe",
+  "username": "John Doe",
   "email": "jhon@gmail.com",
   "password": "password123"
 }

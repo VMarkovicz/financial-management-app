@@ -7,7 +7,7 @@ class UserViewModel extends ChangeNotifier {
 
   UserViewModel(this._userRepository);
 
-  User user = User(id: '', name: '', email: '', password: '');
+  User user = User(id: '', username: '', email: '', password: '');
   bool busy = false;
 
   Future<void> loadUser() async {

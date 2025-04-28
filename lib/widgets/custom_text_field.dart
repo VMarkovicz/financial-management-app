@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final bool isEmail;
   final dynamic controller;
   final dynamic validator;
+  final String? initialValue;
 
   const CustomTextField({
     super.key,
@@ -16,6 +17,7 @@ class CustomTextField extends StatelessWidget {
     this.isEmail = false,
     required this.controller,
     this.validator,
+    this.initialValue,
   });
 
   @override
@@ -24,6 +26,7 @@ class CustomTextField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         validator: validator,
+        initialValue: initialValue,
         keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
         obscureText: isPassword,
         decoration: InputDecoration(

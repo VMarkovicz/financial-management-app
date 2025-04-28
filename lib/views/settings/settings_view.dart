@@ -1,3 +1,4 @@
+import 'package:financial_management_app/models/user_model.dart';
 import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/views/settings/widgets/edit_profile.dart';
 import 'package:financial_management_app/views/settings/widgets/change_currency.dart';
@@ -16,6 +17,7 @@ class SettingsView extends StatefulWidget {
 
 class _SettingsViewState extends State<SettingsView> {
   late UserViewModel _userViewModel;
+  late final User _user;
 
   @override
   void initState() {
@@ -40,10 +42,10 @@ class _SettingsViewState extends State<SettingsView> {
                       children: [
                         ProfileAvatar(
                           // use the userViewModel to get the user data
-                          username: userViewModel.user.name ?? '',
+                          username: userViewModel.user.username,
                         ),
                         const SizedBox(height: 16),
-                        const EditProfile(),
+                        EditProfile(user: userViewModel.user),
                         const SizedBox(height: 16),
                         const ChangeCurrency(),
                       ],
