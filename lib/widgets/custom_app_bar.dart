@@ -1,6 +1,7 @@
 import 'package:financial_management_app/views/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:financial_management_app/theme/app_theme.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
@@ -84,7 +85,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       ),
       centerTitle: true,
       backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
+      foregroundColor: AppTheme.textDark,
       actionsPadding: const EdgeInsets.only(right: 16.0),
       actions:
           widget.showActions
@@ -99,8 +100,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       ),
                   icon: const Icon(Icons.settings),
                   style: IconButton.styleFrom(
-                    backgroundColor: Color(0xFFF8F8F8),
-                    foregroundColor: Colors.black,
+                    backgroundColor: AppTheme.surfaceLight,
+                    foregroundColor: AppTheme.textDark,
                   ),
                 ),
               ]

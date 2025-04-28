@@ -37,7 +37,7 @@ class LoginView extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               CustomTextField(
-                label: "Email", 
+                label: "Email",
                 hint: "Enter your email",
                 controller: _emailController,
                 isEmail: true,
@@ -52,12 +52,17 @@ class LoginView extends StatelessWidget {
               const SizedBox(height: 50),
               CustomButton(
                 label: "Sign In",
-                backgroundColor: ButtonType.primary, 
-                onPressed: () => Get.off(() => const HomeView()),
+                backgroundColor: ButtonType.primary,
+                onPressed:
+                    () => Get.off(
+                      () => const HomeView(),
+                      preventDuplicates: true,
+                      transition: Transition.noTransition,
+                    ),
               ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: () => {}, 
+                onPressed: () => {},
                 child: Text(
                   "Forgot Password.",
                   style: TextStyle(
@@ -67,7 +72,12 @@ class LoginView extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () => Get.off(() => RegisterView()),
+                onPressed:
+                    () => Get.off(
+                      () => RegisterView(),
+                      preventDuplicates: true,
+                      transition: Transition.noTransition,
+                    ),
                 child: Text(
                   "Don't have an account.",
                   style: TextStyle(

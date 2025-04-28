@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:financial_management_app/theme/app_theme.dart';
 
 enum ButtonType { primary, secondary, ghost }
 
@@ -27,9 +28,9 @@ class CustomButton extends StatelessWidget {
   _getBackgoundColor() {
     switch (backgroundColor) {
       case ButtonType.primary:
-        return const Color(0xFF68E093);
+        return AppTheme.success;
       case ButtonType.secondary:
-        return Colors.red;
+        return AppTheme.error;
       case ButtonType.ghost:
         return Colors.transparent;
     }
@@ -57,7 +58,9 @@ class CustomButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: _getBackgoundColor(),
           foregroundColor:
-              backgroundColor == ButtonType.ghost ? Colors.black : Colors.white,
+              backgroundColor == ButtonType.ghost
+                  ? AppTheme.textDark
+                  : Colors.white,
           elevation: 0,
           surfaceTintColor:
               backgroundColor == ButtonType.ghost ? Colors.transparent : null,
@@ -67,10 +70,7 @@ class CustomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             side:
                 backgroundColor == ButtonType.ghost
-                    ? const BorderSide(
-                      color: Color.fromARGB(255, 203, 203, 203),
-                      width: 1.0,
-                    )
+                    ? BorderSide(color: AppTheme.defaultGrey, width: 1.0)
                     : BorderSide.none,
           ),
         ),
@@ -82,7 +82,7 @@ class CustomButton extends StatelessWidget {
             fontWeight: _getFontWeight(),
             color:
                 backgroundColor == ButtonType.ghost
-                    ? const Color(0xFF323232)
+                    ? AppTheme.textDark
                     : Colors.white,
           ),
         ),

@@ -1,5 +1,5 @@
 import 'package:financial_management_app/widgets/custom_button.dart';
-import 'package:financial_management_app/widgets/heatmap_calendar/heatmap_calendar.dart';
+import 'package:financial_management_app/widgets/heatmap_calendar.dart';
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
 import 'package:financial_management_app/widgets/custom_navigation_bar.dart';
 import 'package:financial_management_app/widgets/paper_container.dart';

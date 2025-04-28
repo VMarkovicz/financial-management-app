@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:financial_management_app/theme/app_theme.dart';
 
 class HeatmapCalendar extends StatelessWidget {
   final void Function(DateTime)? onClick;
@@ -12,7 +13,7 @@ class HeatmapCalendar extends StatelessWidget {
       child: DefaultTextStyle(
         style: const TextStyle(fontSize: 12, color: Colors.black),
         child: HeatMapCalendar(
-          defaultColor: Color(0xFFDCDCDC),
+          defaultColor: AppTheme.defaultGrey,
           flexible: true,
           showColorTip: false,
           colorMode: ColorMode.color,
@@ -24,7 +25,7 @@ class HeatmapCalendar extends StatelessWidget {
             DateTime(2025, 1, 9): 2,
             DateTime(2025, 1, 13): 1,
           },
-          colorsets: const {1: Color(0xFF68E093), 2: Color(0xFFE0686A)},
+          colorsets: {1: AppTheme.success, 2: AppTheme.error},
           onClick: (value) {
             if (onClick != null) {
               onClick!(value);

@@ -2,11 +2,12 @@ import 'package:financial_management_app/views/authentication/login_view.dart';
 import 'package:financial_management_app/views/authentication/register_view.dart';
 import 'package:financial_management_app/views/calendar/calendar_view.dart';
 import 'package:financial_management_app/views/graph/graph_view.dart';
-import 'package:financial_management_app/views/home/home_view.dart';
 import 'package:financial_management_app/views/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:financial_management_app/views/home/home_view.dart';
+import 'package:financial_management_app/theme/app_theme.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -15,9 +16,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Financial Management App',
+      home: const HomeView(),
       initialRoute: '/login',
-      defaultTransition: Transition.noTransition,
       routes: {
         '/login': (context) => LoginView(),
         '/register': (context) => RegisterView(),
@@ -26,12 +27,7 @@ class App extends StatelessWidget {
         '/graph': (context) => const GraphView(),
         '/settings': (context) => const SettingsView(),
       },
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          surface: Colors.white,
-        ),
+      theme: AppTheme.theme.copyWith(
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {

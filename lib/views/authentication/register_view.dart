@@ -9,8 +9,8 @@ class RegisterView extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-  
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   RegisterView({super.key});
 
@@ -63,17 +63,24 @@ class RegisterView extends StatelessWidget {
               CustomButton(
                 label: "Sign Un",
                 backgroundColor: ButtonType.primary,
-                onPressed: () => Get.off(() => const HomeView()),
+                onPressed:
+                    () => Get.off(
+                      () => const HomeView(),
+                      preventDuplicates: true,
+                      transition: Transition.noTransition,
+                    ),
               ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: () => Get.off(() => LoginView()),
+                onPressed:
+                    () => Get.off(
+                      () => LoginView(),
+                      preventDuplicates: true,
+                      transition: Transition.noTransition,
+                    ),
                 child: Text(
                   "Already have an account.",
-                  style: TextStyle(
-                    fontSize: 14, 
-                    fontWeight: FontWeight.normal
-                  ),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
                 ),
               ),
             ],
