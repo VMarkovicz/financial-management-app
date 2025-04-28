@@ -1,9 +1,10 @@
-import 'package:financial_management_app/views/calendar/calendar_view.dart';
+import 'dart:math';
+
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
-import 'package:financial_management_app/widgets/custom_button.dart';
-import 'package:financial_management_app/widgets/custom_text_field.dart';
+import 'package:financial_management_app/widgets/custom_navigation_bar.dart';
+import 'package:financial_management_app/widgets/paper_container.dart';
+import 'package:financial_management_app/widgets/transaction.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -13,7 +14,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final TextEditingController _testController = TextEditingController();
   String _selectedCurrency = 'USD';
 
   @override
@@ -29,17 +29,70 @@ class _HomeViewState extends State<HomeView> {
           });
         },
       ),
+      bottomNavigationBar: const CustomNavigationBar(currentRoute: '/home'),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Add Transaction")));
+        },
+        backgroundColor: Color(0xFF68E093),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 16,
           children: [
-            CustomTextField(controller: _testController, label: "teste"),
-            CustomButton(
-              label: "teste",
-              onPressed: () {
-                Get.to(() => const CalendarView());
-              },
+            PaperContainer(
+              width: double.infinity,
+              // add a padding only to top and bottom
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 46.0),
+                child: Column(
+                  children: [
+                    Text(
+                      "\$1000.00",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Text(
+                      "Current Balance",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w100,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Text(
+              "Today's Usage",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+            ),
+            Expanded(
+              child: ClipRect(
+                child: ListView.separated(
+                  itemCount: 10, // number of transactions
+                  separatorBuilder:
+                      (context, index) => const SizedBox(height: 16),
+                  itemBuilder:
+                      (context, index) => Transaction(
+                        title: 'Groceries',
+                        description: 'blalblalb',
+                        amount: 1000,
+                        type:
+                            Random().nextBool()
+                                ? TransactionType.income
+                                : TransactionType.expense,
+                        date: DateTime.now(),
+                      ),
+                ),
+              ),
             ),
           ],
         ),

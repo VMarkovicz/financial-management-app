@@ -53,7 +53,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
           children: [
             if (widget.showNavigation)
               IconButton(
-                onPressed: widget.onBackTap ?? () => Get.back(),
+                onPressed:
+                    widget.onBackTap ?? () => Get.back(closeOverlays: true),
                 icon: const Icon(Icons.arrow_back),
               ),
             if (widget.showActions)
@@ -89,7 +90,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 IconButton(
                   onPressed:
                       widget.onProfileTap ??
-                      () => Get.to(() => const SettingsView()),
+                      () => Get.to(
+                        () => const SettingsView(),
+                        preventDuplicates: true,
+                        transition: Transition.noTransition,
+                      ),
                   icon: const Icon(Icons.settings),
                   style: IconButton.styleFrom(
                     backgroundColor: Color(0xFFF8F8F8),

@@ -1,4 +1,7 @@
+import 'package:financial_management_app/views/calendar/calendar_view.dart';
+import 'package:financial_management_app/views/graph/graph_view.dart';
 import 'package:financial_management_app/views/home/home_view.dart';
+import 'package:financial_management_app/views/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,6 +14,14 @@ class App extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
+      initialRoute: '/home',
+      defaultTransition: Transition.noTransition,
+      routes: {
+        '/home': (context) => const HomeView(),
+        '/calendar': (context) => const CalendarView(),
+        '/graph': (context) => const GraphView(),
+        '/settings': (context) => const SettingsView(),
+      },
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(
@@ -18,8 +29,13 @@ class App extends StatelessWidget {
           surface: Colors.white,
         ),
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+            TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
+          },
+        ),
       ),
-      home: const HomeView(),
     );
   }
 }

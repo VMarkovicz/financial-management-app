@@ -1,5 +1,6 @@
 import 'package:financial_management_app/widgets/heatmap_calendar/heatmap_calendar.dart';
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
+import 'package:financial_management_app/widgets/custom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class CalendarView extends StatefulWidget {
@@ -24,6 +25,7 @@ class _CalendarViewState extends State<CalendarView> {
           });
         },
       ),
+      bottomNavigationBar: const CustomNavigationBar(currentRoute: '/calendar'),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
