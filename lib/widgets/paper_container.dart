@@ -1,3 +1,4 @@
+import 'package:financial_management_app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class PaperContainer extends StatelessWidget {
@@ -23,7 +24,7 @@ class PaperContainer extends StatelessWidget {
       height: height,
       alignment: alignment,
       decoration: BoxDecoration(
-        color: backgroundColor ?? Color(0xFFF8F8F8),
+        color: backgroundColor ?? AppTheme.surfaceLight,
         borderRadius: BorderRadius.circular(8),
       ),
       child: child,

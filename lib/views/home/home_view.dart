@@ -8,6 +8,7 @@ import 'package:financial_management_app/widgets/modal.dart';
 import 'package:financial_management_app/widgets/paper_container.dart';
 import 'package:financial_management_app/widgets/transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:financial_management_app/theme/app_theme.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -82,7 +83,7 @@ class _HomeViewState extends State<HomeView> {
             ],
           );
         },
-        backgroundColor: Color(0xFF68E093),
+        backgroundColor: AppTheme.success,
         child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Padding(

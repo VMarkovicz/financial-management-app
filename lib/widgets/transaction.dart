@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:financial_management_app/widgets/modal.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
+import 'package:financial_management_app/theme/app_theme.dart';
 
 enum TransactionType { income, expense }
 
@@ -75,7 +76,7 @@ class Transaction extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFFF8F8F8),
+        color: AppTheme.surfaceLight,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
@@ -88,8 +89,8 @@ class Transaction extends StatelessWidget {
                   : Icons.arrow_downward,
               color:
                   type == TransactionType.income
-                      ? Color(0xFF68E093)
-                      : Color(0XFFE0686A),
+                      ? AppTheme.success
+                      : AppTheme.error,
             ),
             SizedBox(width: 16),
             Expanded(
@@ -109,8 +110,8 @@ class Transaction extends StatelessWidget {
               style: TextStyle(
                 color:
                     type == TransactionType.income
-                        ? Color(0xFF68E093)
-                        : Color(0XFFE0686A),
+                        ? AppTheme.success
+                        : AppTheme.error,
               ),
             ),
             SizedBox(width: 8),
