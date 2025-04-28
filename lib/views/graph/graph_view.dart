@@ -13,6 +13,33 @@ class GraphView extends StatefulWidget {
 
 class _GraphViewState extends State<GraphView> {
   String _selectedCurrency = 'USD';
+  DateTime _selectedDate = DateTime.now();
+
+  void _selectWeek(bool next) {
+    setState(() {
+      _selectedDate = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day + (next ? 7 : -7),
+      );
+    });
+  }
+
+  String _getWeekRange() {
+    // Get the start of the week (Monday)
+    DateTime startOfWeek = _selectedDate.subtract(
+      Duration(days: _selectedDate.weekday - 1),
+    );
+    // Get the end of the week (Sunday)
+    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
+
+    // If start and end are in the same month
+    if (startOfWeek.month == endOfWeek.month) {
+      return "${DateFormat('MMM d').format(startOfWeek)} - ${DateFormat('d, y').format(endOfWeek)}";
+    }
+    // If they're in different months
+    return "${DateFormat('MMM d').format(startOfWeek)} - ${DateFormat('MMM d, y').format(endOfWeek)}";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +115,26 @@ class _GraphViewState extends State<GraphView> {
                 ChartData(value: 300, label: "Jul"),
                 ChartData(value: 600, label: "Aug"),
                 ChartData(value: 900, label: "Sep"),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: () => _selectWeek(false),
+                  icon: const Icon(Icons.chevron_left),
+                ),
+                Text(
+                  _getWeekRange(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => _selectWeek(true),
+                  icon: const Icon(Icons.chevron_right),
+                ),
               ],
             ),
           ],
