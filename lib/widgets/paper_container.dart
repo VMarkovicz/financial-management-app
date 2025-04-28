@@ -19,7 +19,7 @@ class PaperContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
+      width: width ?? double.infinity,
       height: height,
       alignment: alignment,
       decoration: BoxDecoration(

@@ -40,7 +40,7 @@ class Modal extends StatelessWidget {
             horizontal: 26,
             vertical: 16,
           ),
-          title: Text(title),
+          title: Center(child: Text(title)),
           content: body,
           actions: [
             SizedBox(

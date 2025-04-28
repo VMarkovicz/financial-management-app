@@ -54,7 +54,7 @@ class RegisterView extends StatelessWidget {
               ),
               const SizedBox(height: 26),
               CustomTextField(
-                label: "Password",
+                label: "Confirm Password",
                 hint: "Confirm your password",
                 controller: _confirmPasswordController,
                 isPassword: true,

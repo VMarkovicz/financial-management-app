@@ -34,7 +34,7 @@ class _HomeViewState extends State<HomeView> {
           setState(() {
             _selectedCurrency = currency;
           });
-        },
+        },  
       ),
       bottomNavigationBar: const CustomNavigationBar(currentRoute: '/home'),
       floatingActionButton: FloatingActionButton(
