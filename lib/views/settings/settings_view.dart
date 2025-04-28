@@ -2,17 +2,18 @@ import 'package:financial_management_app/views/calendar/calendar_view.dart';
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
+import 'package:financial_management_app/widgets/paper_container.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class SettingsView extends StatefulWidget {
+  const SettingsView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<SettingsView> createState() => _SettingsViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _SettingsViewState extends State<SettingsView> {
   final TextEditingController _testController = TextEditingController();
   String _selectedCurrency = 'USD';
 
@@ -20,28 +21,23 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: "Home",
+        title: "Settings",
         initialCurrency: _selectedCurrency,
-        showNavigation: false,
+        showActions: false,
         onCurrencyChanged: (currency) {
           setState(() {
             _selectedCurrency = currency;
           });
         },
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomTextField(controller: _testController, label: "teste"),
-            CustomButton(
-              label: "teste",
-              onPressed: () {
-                Get.to(() => const CalendarView());
-              },
-            ),
-          ],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: PaperContainer(
+            width: double.infinity,
+            height: 100,
+            child: Text('Hello!'),
+          ),
         ),
       ),
     );

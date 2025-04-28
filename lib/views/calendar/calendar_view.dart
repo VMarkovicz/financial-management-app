@@ -1,4 +1,5 @@
 import 'package:financial_management_app/widgets/heatmap_calendar/heatmap_calendar.dart';
+import 'package:financial_management_app/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class CalendarView extends StatefulWidget {
@@ -9,24 +10,19 @@ class CalendarView extends StatefulWidget {
 }
 
 class _CalendarViewState extends State<CalendarView> {
+  String _selectedCurrency = 'USD';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Calendar",
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        leading: DropdownButton(
-          items: [
-            DropdownMenuItem(value: "1", child: Text("USD")),
-            DropdownMenuItem(value: "2", child: Text("EUR")),
-          ],
-          onChanged: (value) {},
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+      appBar: CustomAppBar(
+        title: "Calendar",
+        initialCurrency: _selectedCurrency,
+        onCurrencyChanged: (currency) {
+          setState(() {
+            _selectedCurrency = currency;
+          });
+        },
       ),
       body: Center(
         child: Padding(
