@@ -1,3 +1,5 @@
+import 'package:financial_management_app/views/authentication/login_view.dart';
+import 'package:financial_management_app/views/authentication/register_view.dart';
 import 'package:financial_management_app/views/calendar/calendar_view.dart';
 import 'package:financial_management_app/views/graph/graph_view.dart';
 import 'package:financial_management_app/views/home/home_view.dart';
@@ -14,9 +16,11 @@ class App extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      initialRoute: '/home',
+      initialRoute: '/login',
       defaultTransition: Transition.noTransition,
       routes: {
+        '/login': (context) => LoginView(),
+        '/register': (context) => RegisterView(),
         '/home': (context) => const HomeView(),
         '/calendar': (context) => const CalendarView(),
         '/graph': (context) => const GraphView(),

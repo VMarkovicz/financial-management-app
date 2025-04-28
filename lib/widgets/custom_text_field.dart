@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label; 
+  final String hint;
   final bool isPassword;
   final bool isEmail;
   final dynamic controller;
@@ -10,6 +11,7 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
     required this.label,
+    required this.hint,
     this.isPassword = false,
     this.isEmail = false,
     required this.controller,
@@ -26,6 +28,7 @@ class CustomTextField extends StatelessWidget {
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
+          hintText: hint,
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.blueGrey, width: 2.0),
           ),
