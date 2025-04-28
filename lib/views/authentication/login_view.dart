@@ -2,6 +2,7 @@ import 'package:financial_management_app/views/authentication/register_view.dart
 import 'package:financial_management_app/views/home/home_view.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,37 +20,28 @@ class LoginView extends StatelessWidget {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 32,
             children: [
               Text(
                 "FinTrack",
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 32),
               Text(
                 "Sign In",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
               ),
-              const SizedBox(height: 32),
               CustomTextField(
                 label: "Email",
                 hint: "Enter your email",
                 controller: _emailController,
                 isEmail: true,
               ),
-              const SizedBox(height: 26),
               CustomTextField(
                 label: "Password",
                 hint: "Enter your password",
                 controller: _passwordController,
                 isPassword: true,
               ),
-              const SizedBox(height: 50),
               CustomButton(
                 label: "Sign In",
                 backgroundColor: ButtonType.primary,
@@ -60,31 +52,58 @@ class LoginView extends StatelessWidget {
                       transition: Transition.noTransition,
                     ),
               ),
-              const SizedBox(height: 8),
-              TextButton(
-                onPressed: () => {},
-                child: Text(
-                  "Forgot Password.",
-                  style: TextStyle(
-                    fontSize: 14, 
-                    fontWeight: FontWeight.normal
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed:
-                    () => Get.off(
-                      () => RegisterView(),
-                      preventDuplicates: true,
-                      transition: Transition.noTransition,
+              Column(
+                spacing: 16,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      text: "Reset Password.",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.blue,
+                      ),
+                      recognizer:
+                          TapGestureRecognizer()
+                            ..onTap = () {
+                              Get.to(
+                                () => const HomeView(),
+                                preventDuplicates: true,
+                                transition: Transition.noTransition,
+                              );
+                            },
                     ),
-                child: Text(
-                  "Don't have an account.",
-                  style: TextStyle(
-                    fontSize: 14, 
-                    fontWeight: FontWeight.normal
                   ),
-                ),
+                  RichText(
+                    text: TextSpan(
+                      text: "Don't have an account? ",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.black,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "Sign Up",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.blue,
+                          ),
+                          recognizer:
+                              TapGestureRecognizer()
+                                ..onTap = () {
+                                  Get.to(
+                                    () => RegisterView(),
+                                    preventDuplicates: true,
+                                    transition: Transition.noTransition,
+                                  );
+                                },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

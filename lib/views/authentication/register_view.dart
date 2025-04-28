@@ -2,6 +2,7 @@ import 'package:financial_management_app/views/authentication/login_view.dart';
 import 'package:financial_management_app/views/home/home_view.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,44 +23,45 @@ class RegisterView extends StatelessWidget {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 16,
             children: [
               Text(
                 "FinTrack",
                 style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 32),
+
               Text(
                 "Sign Up",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
               ),
-              const SizedBox(height: 32),
+
               CustomTextField(
                 label: "Email",
                 hint: "Enter your email",
                 controller: _emailController,
                 isEmail: true,
               ),
-              const SizedBox(height: 26),
+
               CustomTextField(
                 label: "Username",
                 hint: "Enter your username",
                 controller: _usernameController,
               ),
-              const SizedBox(height: 26),
+
               CustomTextField(
                 label: "Password",
                 hint: "Enter your password",
                 controller: _passwordController,
                 isPassword: true,
               ),
-              const SizedBox(height: 26),
+
               CustomTextField(
                 label: "Confirm Password",
                 hint: "Confirm your password",
                 controller: _confirmPasswordController,
                 isPassword: true,
               ),
-              const SizedBox(height: 50),
+
               CustomButton(
                 label: "Sign Un",
                 backgroundColor: ButtonType.primary,
@@ -70,17 +72,23 @@ class RegisterView extends StatelessWidget {
                       transition: Transition.noTransition,
                     ),
               ),
-              const SizedBox(height: 8),
-              TextButton(
-                onPressed:
-                    () => Get.off(
-                      () => LoginView(),
-                      preventDuplicates: true,
-                      transition: Transition.noTransition,
-                    ),
-                child: Text(
-                  "Already have an account.",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              RichText(
+                text: TextSpan(
+                  text: "Already have an account.",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.blue,
+                  ),
+                  recognizer:
+                      TapGestureRecognizer()
+                        ..onTap = () {
+                          Get.to(
+                            () => const HomeView(),
+                            preventDuplicates: true,
+                            transition: Transition.noTransition,
+                          );
+                        },
                 ),
               ),
             ],
