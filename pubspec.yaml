@@ -39,6 +39,7 @@ dependencies:
   google_fonts: ^6.2.1
   intl: ^0.20.2
   material_charts: ^0.0.26
+  provider: ^6.1.4
 
 dev_dependencies:
   flutter_test:

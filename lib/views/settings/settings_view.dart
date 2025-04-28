@@ -1,9 +1,11 @@
+import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/views/settings/widgets/edit_profile.dart';
 import 'package:financial_management_app/views/settings/widgets/change_currency.dart';
 import 'package:financial_management_app/views/settings/widgets/profile_avatar.dart';
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
@@ -13,40 +15,59 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
+  late UserViewModel _userViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _userViewModel = context.read<UserViewModel>();
+    Future.microtask(() => _userViewModel.loadUser());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(title: "Settings", showActions: false),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            spacing: 16,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                spacing: 16,
-                children: [ProfileAvatar(), EditProfile(), ChangeCurrency()],
+    return Consumer<UserViewModel>(
+      builder:
+          (context, userViewModel, child) => Scaffold(
+            appBar: CustomAppBar(title: "Settings", showActions: false),
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        ProfileAvatar(
+                          // use the userViewModel to get the user data
+                          username: userViewModel.user.name ?? '',
+                        ),
+                        const SizedBox(height: 16),
+                        const EditProfile(),
+                        const SizedBox(height: 16),
+                        const ChangeCurrency(),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        CustomButton(
+                          label: "Logout",
+                          backgroundColor: ButtonType.ghost,
+                          onPressed: () {},
+                        ),
+                        const SizedBox(height: 16),
+                        CustomButton(
+                          label: "Delete Account",
+                          backgroundColor: ButtonType.secondary,
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Column(
-                spacing: 16,
-                children: [
-                  CustomButton(
-                    label: "Logout",
-                    backgroundColor: ButtonType.ghost,
-                    onPressed: () {},
-                  ),
-                  CustomButton(
-                    label: "Delete Account",
-                    backgroundColor: ButtonType.secondary,
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 }

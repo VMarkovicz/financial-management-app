@@ -2,7 +2,9 @@ import 'package:financial_management_app/widgets/paper_container.dart';
 import 'package:flutter/material.dart';
 
 class ProfileAvatar extends StatelessWidget {
-  const ProfileAvatar({super.key});
+  final String username;
+
+  const ProfileAvatar({super.key, required this.username});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class ProfileAvatar extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "Username",
+              username,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ],
