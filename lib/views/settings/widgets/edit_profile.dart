@@ -1,10 +1,12 @@
 import 'package:financial_management_app/models/user_model.dart';
+import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
 import 'package:financial_management_app/widgets/modal.dart';
 import 'package:financial_management_app/widgets/paper_container.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class EditProfile extends StatefulWidget {
   final User user;
@@ -15,17 +17,38 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  final TextEditingController _testController = TextEditingController();
+  late UserViewModel _userViewModel;
+  final TextEditingController _newUsernameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _userViewModel = context.read<UserViewModel>();
   }
 
   @override
   void dispose() {
-    _testController.dispose();
+    _newUsernameController.dispose();
     super.dispose();
+  }
+
+  void _updateUser() {
+    if (_userViewModel.user.username.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+    try{
+      _userViewModel.updateUser(_newUsernameController.text);
+      Get.back(closeOverlays: true);
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Update failed. Please try again.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 
   @override
@@ -33,7 +56,7 @@ class _EditProfileState extends State<EditProfile> {
     return GestureDetector(
       onTap: () {
         // Update controller text when modal opens
-        _testController.text = widget.user.username ?? '';
+        _newUsernameController.text = widget.user.username;
 
         Modal.show(
           context: context,
@@ -44,7 +67,7 @@ class _EditProfileState extends State<EditProfile> {
               CustomTextField(
                 label: "Edit Profile",
                 hint: "Enter your username",
-                controller: _testController,
+                controller: _newUsernameController,
               ),
             ],
           ),
@@ -60,8 +83,7 @@ class _EditProfileState extends State<EditProfile> {
               label: 'Save',
               width: 100,
               onPressed: () {
-                // TODO: Implement save logic
-                Get.back();
+                _updateUser();
               },
             ),
           ],

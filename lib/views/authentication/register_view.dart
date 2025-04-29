@@ -1,18 +1,80 @@
+import 'package:financial_management_app/models/user_model.dart';
+import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/views/home/home_view.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
-class RegisterView extends StatelessWidget {
+class RegisterView extends StatefulWidget {
+
+  const RegisterView({super.key});
+
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
+  late final UserViewModel _userViewModel;
+
+  var uuid = Uuid();
+
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
 
-  RegisterView({super.key});
+  final TextEditingController _usernameController = TextEditingController();
+
+  final TextEditingController _passwordController = TextEditingController();
+
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _userViewModel = context.read<UserViewModel>();
+  }
+
+  void _register(){
+    if (_emailController.text.isEmpty || _usernameController.text.isEmpty || _passwordController.text.isEmpty || _confirmPasswordController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please fill in all fields",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+    if (_passwordController.text != _confirmPasswordController.text) {
+      Get.snackbar(
+        "Error",
+        "Passwords do not match",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+    try{
+      _userViewModel.createUser(
+        User(
+          id: uuid.v4(),
+          username: _usernameController.text, 
+          email: _emailController.text, 
+          password: _passwordController.text,
+        )
+      );
+      Get.off(
+        () => const HomeView(),
+        preventDuplicates: true,
+        transition: Transition.noTransition,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Registration failed. Please try again.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +127,7 @@ class RegisterView extends StatelessWidget {
                 label: "Sign Un",
                 backgroundColor: ButtonType.primary,
                 onPressed:
-                    () => Get.off(
-                      () => const HomeView(),
-                      preventDuplicates: true,
-                      transition: Transition.noTransition,
-                    ),
+                    () => _register(), 
               ),
               RichText(
                 text: TextSpan(

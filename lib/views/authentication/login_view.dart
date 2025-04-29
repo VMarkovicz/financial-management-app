@@ -1,3 +1,4 @@
+import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/views/authentication/register_view.dart';
 import 'package:financial_management_app/views/home/home_view.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
@@ -5,12 +6,55 @@ import 'package:financial_management_app/widgets/custom_text_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  late final UserViewModel _userViewModel;
+
   final TextEditingController _emailController = TextEditingController();
+
   final TextEditingController _passwordController = TextEditingController();
 
-  LoginView({super.key});
+  @override
+  void initState() {
+    super.initState();
+    _userViewModel = context.read<UserViewModel>();
+  }
+
+  void _login() {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please fill in all fields",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+    try{
+      _userViewModel.loginUser(
+        _emailController.text, 
+        _passwordController.text
+      );
+      Get.off(
+        () => const HomeView(),
+        preventDuplicates: true,
+        transition: Transition.noTransition,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Login failed. Please try again.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +90,7 @@ class LoginView extends StatelessWidget {
                 label: "Sign In",
                 backgroundColor: ButtonType.primary,
                 onPressed:
-                    () => Get.off(
-                      () => const HomeView(),
-                      preventDuplicates: true,
-                      transition: Transition.noTransition,
-                    ),
+                    () => _login(),
               ),
               Column(
                 spacing: 16,

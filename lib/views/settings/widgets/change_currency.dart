@@ -12,7 +12,7 @@ class ChangeCurrency extends StatefulWidget {
 }
 
 class _ChangeCurrencyState extends State<ChangeCurrency> {
-  String _selectedOption = 'USD';
+  String? _selectedCurrency = 'USD';
   final List<String> _options = ['USD', 'BRL', 'BTC', 'ETH'];
 
   @override
@@ -29,15 +29,12 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: DropdownButton<String>(
-              value: _selectedOption,
+              value: _selectedCurrency,
               underline: const SizedBox(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _selectedOption = value;
-                  });
-                  // widget.onCurrencyChanged?.call(value);
-                }
+              onChanged: (currency) {
+                setState(() {
+                  _selectedCurrency = currency;
+                });
               },
               items:
                   _options

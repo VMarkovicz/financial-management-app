@@ -6,7 +6,7 @@ import '../models/user_model.dart';
 List<Transaction> mockTransactions = [];
 
 class ApiService {
-  final _baseUrl = 'example';
+  // final _baseUrl = 'example';
   late String mockUserData;
 
   Future<User> getUserData(String userId) async {
