@@ -1,4 +1,3 @@
-import 'package:financial_management_app/views/authentication/login_view.dart';
 import 'package:financial_management_app/views/home/home_view.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
