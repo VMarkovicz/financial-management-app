@@ -93,47 +93,51 @@ class _HomeViewState extends State<HomeView> {
           Modal.show(
             context: context,
             title: 'Create Transaction',
-            body: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CustomTextField(
-                  label: 'Name',
-                  hint: 'Enter name',
-                  controller: nameController,
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  label: 'Description',
-                  hint: 'Enter description',
-                  controller: descriptionController,
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  label: 'Amount',
-                  hint: 'Enter amount',
-                  controller: amountController,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<TransactionType>(
-                  value: _currentType,
-                  items: [
-                    DropdownMenuItem(
-                      value: TransactionType.income,
-                      child: Text('Income'),
+            body: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomTextField(
+                      label: 'Name',
+                      hint: 'Enter name',
+                      controller: nameController,
                     ),
-                    DropdownMenuItem(
-                      value: TransactionType.expense,
-                      child: Text('Expense'),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      label: 'Description',
+                      hint: 'Enter description',
+                      controller: descriptionController,
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      label: 'Amount',
+                      hint: 'Enter amount',
+                      controller: amountController,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<TransactionType>(
+                      value: _currentType,
+                      items: [
+                        DropdownMenuItem(
+                          value: TransactionType.income,
+                          child: Text('Income'),
+                        ),
+                        DropdownMenuItem(
+                          value: TransactionType.expense,
+                          child: Text('Expense'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => _currentType = value);
+                        }
+                      },
                     ),
                   ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() => _currentType = value);
-                    }
-                  },
                 ),
-              ],
+              ),
             ),
             actions: [
               CustomButton(

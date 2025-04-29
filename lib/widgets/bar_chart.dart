@@ -18,7 +18,7 @@ class BarChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialBarChart(
       width: double.infinity,
-      height: 200,
+      height: 150,
       data:
           data
               .map(

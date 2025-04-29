@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class RegisterView extends StatefulWidget {
-
   const RegisterView({super.key});
 
   @override
@@ -28,7 +27,8 @@ class _RegisterViewState extends State<RegisterView> {
 
   final TextEditingController _passwordController = TextEditingController();
 
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -36,8 +36,11 @@ class _RegisterViewState extends State<RegisterView> {
     _userViewModel = context.read<UserViewModel>();
   }
 
-  void _register(){
-    if (_emailController.text.isEmpty || _usernameController.text.isEmpty || _passwordController.text.isEmpty || _confirmPasswordController.text.isEmpty) {
+  void _register() {
+    if (_emailController.text.isEmpty ||
+        _usernameController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
       Get.snackbar(
         "Error",
         "Please fill in all fields",
@@ -53,14 +56,14 @@ class _RegisterViewState extends State<RegisterView> {
       );
       return;
     }
-    try{
+    try {
       _userViewModel.createUser(
         User(
           id: uuid.v4(),
-          username: _usernameController.text, 
-          email: _emailController.text, 
+          username: _usernameController.text,
+          email: _emailController.text,
           password: _passwordController.text,
-        )
+        ),
       );
       Get.off(
         () => const HomeView(),
@@ -79,76 +82,78 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(64.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 16,
-            children: [
-              Text(
-                "FinTrack",
-                style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-              ),
-
-              Text(
-                "Sign Up",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-              ),
-
-              CustomTextField(
-                label: "Email",
-                hint: "Enter your email",
-                controller: _emailController,
-                isEmail: true,
-              ),
-
-              CustomTextField(
-                label: "Username",
-                hint: "Enter your username",
-                controller: _usernameController,
-              ),
-
-              CustomTextField(
-                label: "Password",
-                hint: "Enter your password",
-                controller: _passwordController,
-                isPassword: true,
-              ),
-
-              CustomTextField(
-                label: "Confirm Password",
-                hint: "Confirm your password",
-                controller: _confirmPasswordController,
-                isPassword: true,
-              ),
-
-              CustomButton(
-                label: "Sign Un",
-                backgroundColor: ButtonType.primary,
-                onPressed:
-                    () => _register(), 
-              ),
-              RichText(
-                text: TextSpan(
-                  text: "Already have an account.",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.blue,
-                  ),
-                  recognizer:
-                      TapGestureRecognizer()
-                        ..onTap = () {
-                          Get.to(
-                            () => const HomeView(),
-                            preventDuplicates: true,
-                            transition: Transition.noTransition,
-                          );
-                        },
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(64.0),
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 16,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "FinTrack",
+                  style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
                 ),
-              ),
-            ],
+
+                Text(
+                  "Sign Up",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                ),
+
+                CustomTextField(
+                  label: "Email",
+                  hint: "Enter your email",
+                  controller: _emailController,
+                  isEmail: true,
+                ),
+
+                CustomTextField(
+                  label: "Username",
+                  hint: "Enter your username",
+                  controller: _usernameController,
+                ),
+
+                CustomTextField(
+                  label: "Password",
+                  hint: "Enter your password",
+                  controller: _passwordController,
+                  isPassword: true,
+                ),
+
+                CustomTextField(
+                  label: "Confirm Password",
+                  hint: "Confirm your password",
+                  controller: _confirmPasswordController,
+                  isPassword: true,
+                ),
+
+                CustomButton(
+                  label: "Sign Un",
+                  backgroundColor: ButtonType.primary,
+                  onPressed: () => _register(),
+                ),
+                RichText(
+                  text: TextSpan(
+                    text: "Already have an account.",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.blue,
+                    ),
+                    recognizer:
+                        TapGestureRecognizer()
+                          ..onTap = () {
+                            Get.to(
+                              () => const HomeView(),
+                              preventDuplicates: true,
+                              transition: Transition.noTransition,
+                            );
+                          },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

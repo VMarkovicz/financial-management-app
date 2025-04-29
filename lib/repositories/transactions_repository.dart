@@ -29,7 +29,9 @@ class TransactionsRepository {
         .getTodaysTransaction(date);
 
     double totalBalance = todayTransactions.fold(0.0, (sum, transaction) {
-      return sum + transaction.amount;
+      return transaction.type == TransactionType.income
+          ? sum + transaction.amount
+          : sum - transaction.amount;
     });
 
     return totalBalance;
