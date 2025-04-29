@@ -1,3 +1,4 @@
+import 'package:financial_management_app/widgets/bar_chart.dart';
 import 'package:flutter/material.dart';
 import '../models/transaction_model.dart';
 import '../repositories/transactions_repository.dart';
@@ -86,5 +87,35 @@ class TransactionsViewmodel extends ChangeNotifier {
     );
     busyForCalendar = false;
     notifyListeners();
+  }
+
+  Future<List<ChartData>> getExpensesByWeek(
+    DateTime weekStart,
+    DateTime weekEnd,
+  ) async {
+    busy = true;
+    notifyListeners();
+    List<ChartData> expenses = await _transactionsRepository.getExpensesByWeek(
+      weekStart,
+      weekEnd,
+    );
+    busy = false;
+    notifyListeners();
+    return expenses;
+  }
+
+  Future<List<ChartData>> getIncomeByWeek(
+    DateTime weekStart,
+    DateTime weekEnd,
+  ) async {
+    busy = true;
+    notifyListeners();
+    List<ChartData> incomes = await _transactionsRepository.getIncomesByWeek(
+      weekStart,
+      weekEnd,
+    );
+    busy = false;
+    notifyListeners();
+    return incomes;
   }
 }

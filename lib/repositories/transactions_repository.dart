@@ -1,3 +1,5 @@
+import 'package:financial_management_app/widgets/bar_chart.dart';
+
 import '../models/transaction_model.dart';
 import '../services/api_service.dart';
 
@@ -35,5 +37,19 @@ class TransactionsRepository {
 
   Future<Map<DateTime, int>> getDayBalanceByMonth(DateTime date) async {
     return _apiService.getDayBalanceByMonth(date);
+  }
+
+  Future<List<ChartData>> getIncomesByWeek(
+    DateTime weekStart,
+    DateTime weekEnd,
+  ) async {
+    return _apiService.getIncomesByWeek(weekStart, weekEnd);
+  }
+
+  Future<List<ChartData>> getExpensesByWeek(
+    DateTime weekStart,
+    DateTime weekEnd,
+  ) async {
+    return _apiService.getExpensesByWeek(weekStart, weekEnd);
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:financial_management_app/models/transaction_model.dart';
+import 'package:financial_management_app/widgets/bar_chart.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 
@@ -8,6 +10,7 @@ List<Transaction> mockTransactions = [];
 class ApiService {
   // final _baseUrl = 'example';
   late String mockUserData;
+  final random = Random();
 
   Future<User> getUserData(String userId) async {
     return User.fromJson(jsonDecode(mockUserData));
@@ -108,5 +111,37 @@ class ApiService {
     } else {
       return {};
     }
+  }
+
+  Future<List<ChartData>> getExpensesByWeek(
+    DateTime weekStart,
+    DateTime weekEnd,
+  ) async {
+    await Future.delayed(Duration(milliseconds: 200));
+    return [
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Sun"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Mon"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Tue"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Wed"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Thu"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Fri"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Sat"),
+    ];
+  }
+
+  Future<List<ChartData>> getIncomesByWeek(
+    DateTime weekStart,
+    DateTime weekEnd,
+  ) async {
+    await Future.delayed(Duration(milliseconds: 200));
+    return [
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Sun"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Mon"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Tue"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Wed"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Thu"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Fri"),
+      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Sat"),
+    ];
   }
 }
