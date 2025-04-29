@@ -22,16 +22,18 @@ class TransactionsRepository {
     await _apiService.deleteTransaction(transactionId);
   }
 
-  Future<double> getTotalTodayBalance() async {
-    DateTime now = DateTime.now();
-
+  Future<double> getTotalBalance(DateTime date) async {
     List<Transaction> todayTransactions = await _apiService
-        .getTodaysTransaction(now);
+        .getTodaysTransaction(date);
 
     double totalBalance = todayTransactions.fold(0.0, (sum, transaction) {
       return sum + transaction.amount;
     });
 
     return totalBalance;
+  }
+
+  Future<Map<DateTime, int>> getDayBalanceByMonth(DateTime date) async {
+    return _apiService.getDayBalanceByMonth(date);
   }
 }

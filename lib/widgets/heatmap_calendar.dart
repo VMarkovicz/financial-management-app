@@ -4,8 +4,15 @@ import 'package:financial_management_app/theme/app_theme.dart';
 
 class HeatmapCalendar extends StatelessWidget {
   final void Function(DateTime)? onClick;
+  final void Function(DateTime)? onMonthChange;
+  final Map<DateTime, int> datesHeatmap;
 
-  const HeatmapCalendar({super.key, this.onClick});
+  const HeatmapCalendar({
+    super.key,
+    this.onClick,
+    required this.datesHeatmap,
+    this.onMonthChange,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +25,15 @@ class HeatmapCalendar extends StatelessWidget {
           showColorTip: false,
           colorMode: ColorMode.color,
           textColor: Colors.white,
-          datasets: {
-            DateTime(2025, 1, 6): 1,
-            DateTime(2025, 1, 7): 2,
-            DateTime(2025, 1, 8): 1,
-            DateTime(2025, 1, 9): 2,
-            DateTime(2025, 1, 13): 1,
+          datasets: datesHeatmap,
+          onMonthChange: (DateTime date) {
+            if (onMonthChange != null) {
+              onMonthChange!(date);
+              return;
+            }
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(date.toString())));
           },
           colorsets: {1: AppTheme.success, 2: AppTheme.error},
           onClick: (value) {

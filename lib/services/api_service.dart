@@ -76,4 +76,37 @@ class ApiService {
 
     return todayTransactions;
   }
+
+  Future<Map<DateTime, int>> getDayBalanceByMonth(DateTime date) async {
+    await Future.delayed(Duration(seconds: 1));
+    if (date.month == 4) {
+      return {
+        DateTime(2025, 4, 6): 1,
+        DateTime(2025, 4, 7): 2,
+        DateTime(2025, 4, 8): 1,
+        DateTime(2025, 4, 9): 2,
+        DateTime(2025, 4, 13): 1,
+      };
+    }
+    if (date.month == 5) {
+      return {
+        DateTime(2025, 5, 6): 1,
+        DateTime(2025, 5, 7): 2,
+        DateTime(2025, 5, 8): 1,
+        DateTime(2025, 5, 9): 2,
+        DateTime(2025, 5, 13): 1,
+      };
+    }
+    if (date.month == 3) {
+      return {
+        DateTime(2025, 3, 6): 1,
+        DateTime(2025, 3, 7): 2,
+        DateTime(2025, 3, 8): 1,
+        DateTime(2025, 3, 9): 2,
+        DateTime(2025, 3, 13): 1,
+      };
+    } else {
+      return {};
+    }
+  }
 }

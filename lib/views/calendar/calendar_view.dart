@@ -1,3 +1,4 @@
+import 'package:financial_management_app/viewmodels/transactions_viewmodel.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/heatmap_calendar.dart';
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
@@ -5,6 +6,7 @@ import 'package:financial_management_app/widgets/custom_navigation_bar.dart';
 import 'package:financial_management_app/widgets/paper_container.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -16,6 +18,19 @@ class CalendarView extends StatefulWidget {
 class _CalendarViewState extends State<CalendarView> {
   String _selectedCurrency = 'USD';
   DateTime _selectedDate = DateTime.now();
+  late TransactionsViewmodel _transactionsViewmodel;
+
+  @override
+  void initState() {
+    super.initState();
+    _transactionsViewmodel = context.read<TransactionsViewmodel>();
+    Future.microtask(
+      () => _transactionsViewmodel.getTotalBalanceByDay(_selectedDate),
+    );
+    Future.microtask(
+      () => _transactionsViewmodel.getDayBalanceByMonth(_selectedDate),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +51,24 @@ class _CalendarViewState extends State<CalendarView> {
           child: Column(
             spacing: 32,
             children: [
-              HeatmapCalendar(
-                onClick: (value) {
-                  setState(() {
-                    _selectedDate = value;
-                  });
+              Consumer<TransactionsViewmodel>(
+                builder: (context, viewModel, child) {
+                  return HeatmapCalendar(
+                    onClick: (value) {
+                      setState(() {
+                        _selectedDate = value;
+                      });
+                      viewModel.getTotalBalanceByDay(_selectedDate);
+                    },
+                    onMonthChange: (monthDate) {
+                      viewModel.getDayBalanceByMonth(monthDate);
+                    },
+                    datesHeatmap: viewModel.balanceByDay,
+                  );
                 },
               ),
               PaperContainer(
                 width: double.infinity,
-                // add a padding only to top and bottom
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 46.0),
                   child: Column(
@@ -58,12 +81,19 @@ class _CalendarViewState extends State<CalendarView> {
                           fontWeight: FontWeight.w100,
                         ),
                       ),
-                      Text(
-                        "\$1000.00",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900,
-                        ),
+                      Consumer<TransactionsViewmodel>(
+                        builder: (context, viewModel, child) {
+                          if (viewModel.busy) {
+                            return const CircularProgressIndicator();
+                          }
+                          return Text(
+                            '${viewModel.totalBalance} $_selectedCurrency',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

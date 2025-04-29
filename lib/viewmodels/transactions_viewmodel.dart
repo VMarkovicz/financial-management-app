@@ -9,8 +9,10 @@ class TransactionsViewmodel extends ChangeNotifier {
   TransactionsViewmodel(this._transactionsRepository);
 
   List<Transaction> transactions = [];
+  Map<DateTime, int> balanceByDay = {};
   double totalBalance = 0.0;
   bool busy = false;
+  bool busyForCalendar = false;
 
   Future<void> loadTransactions(String userId) async {
     _currentUserId = userId;
@@ -55,8 +57,34 @@ class TransactionsViewmodel extends ChangeNotifier {
   Future<void> getTotalTodayBalance() async {
     busy = true;
     notifyListeners();
-    totalBalance = await _transactionsRepository.getTotalTodayBalance();
+    DateTime today = DateTime.now();
+    totalBalance = await _transactionsRepository.getTotalBalance(today);
     busy = false;
+    notifyListeners();
+  }
+
+  Future<void> getTotalBalanceByDay(DateTime date) async {
+    busy = true;
+    notifyListeners();
+    totalBalance = await _transactionsRepository.getTotalBalance(date);
+    busy = false;
+    notifyListeners();
+  }
+
+  Future<void> getDayBalanceByMonth(DateTime date) async {
+    busyForCalendar = true;
+    notifyListeners();
+    if (balanceByDay.isNotEmpty &&
+        balanceByDay.keys.first.month == date.month &&
+        balanceByDay.keys.first.year == date.year) {
+      busyForCalendar = false;
+      notifyListeners();
+      return;
+    }
+    balanceByDay.addAll(
+      await _transactionsRepository.getDayBalanceByMonth(date),
+    );
+    busyForCalendar = false;
     notifyListeners();
   }
 }
