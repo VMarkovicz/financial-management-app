@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/user_model.dart';
 import '../repositories/user_repository.dart';
 
@@ -7,7 +8,7 @@ class UserViewModel extends ChangeNotifier {
 
   UserViewModel(this._userRepository);
 
-  User user = User(id: '', username: '', email: '', password: '');
+  UserModel user = UserModel(id: '', username: '', email: '', password: '');
   bool busy = false;
 
   Future<void> loadUser() async {
@@ -18,19 +19,19 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<User> createUser(User user) async {
+  Future<UserModel> createUser(UserModel user) async {
     final response = await _userRepository.createUser(user);
     notifyListeners();
     return response;
   }
 
-  Future<User> loginUser(String email, String password) async {
+  Future<UserModel> loginUser(String email, String password) async {
     final response = await _userRepository.loginUser(email, password);
     notifyListeners();
     return response;
   }
 
-  Future<User> updateUser(String nome) async {
+  Future<UserModel> updateUser(String nome) async {
     final response = await _userRepository.updateUser(nome);
     user = response;
     notifyListeners();
@@ -43,7 +44,7 @@ class UserViewModel extends ChangeNotifier {
   }
 
   void logoutUser() {
-    user = User(id: '', username: '', email: '', password: '');
+    user = UserModel(id: '', username: '', email: '', password: '');
     notifyListeners();
   }
 }

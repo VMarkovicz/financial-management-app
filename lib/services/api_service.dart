@@ -1,40 +1,43 @@
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:financial_management_app/models/transaction_model.dart';
 import 'package:financial_management_app/widgets/bar_chart.dart';
-import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart' hide User;
+
 import '../models/user_model.dart';
 
 List<Transaction> mockTransactions = [];
 
 class ApiService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   // final _baseUrl = 'example';
   late String mockUserData;
   final random = Random();
 
-  Future<User> getUserData(String userId) async {
-    return User.fromJson(jsonDecode(mockUserData));
+  Future<UserModel> getUserData(String userId) async {
+    return UserModel.fromJson(jsonDecode(mockUserData));
   }
 
-  Future<User> createUser(User user) async {
+  Future<UserModel> createUser(UserModel user) async {
     mockUserData = jsonEncode(user);
-    return User.fromJson(jsonDecode(mockUserData));
+    return UserModel.fromJson(jsonDecode(mockUserData));
   }
 
-  Future<User> loginUser(String email, String password) async {
+  Future<UserModel> loginUser(String email, String password) async {
     var existingUser = await getUserData(mockUserData);
     if (existingUser.email == email && existingUser.password == password) {
-      return User.fromJson(jsonDecode(mockUserData));
+      return UserModel.fromJson(jsonDecode(mockUserData));
     } else {
       throw Exception('Invalid credentials');
     }
   }
 
-  Future<User> updateUser(String nome) async {
+  Future<UserModel> updateUser(String nome) async {
     var existingUser = await getUserData(mockUserData);
     existingUser.username = nome;
     mockUserData = jsonEncode(existingUser);
-    return User.fromJson(jsonDecode(mockUserData));
+    return UserModel.fromJson(jsonDecode(mockUserData));
   }
 
   Future<void> deleteUser(String id) async {

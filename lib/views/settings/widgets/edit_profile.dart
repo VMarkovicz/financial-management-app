@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class EditProfile extends StatefulWidget {
-  final User user;
+  final UserModel user;
   const EditProfile({super.key, required this.user});
 
   @override
@@ -39,7 +39,7 @@ class _EditProfileState extends State<EditProfile> {
       );
       return;
     }
-    try{
+    try {
       _userViewModel.updateUser(_newUsernameController.text);
       Get.back(closeOverlays: true);
     } catch (e) {

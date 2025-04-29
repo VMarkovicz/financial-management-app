@@ -58,7 +58,7 @@ class _RegisterViewState extends State<RegisterView> {
     }
     try {
       _userViewModel.createUser(
-        User(
+        UserModel(
           id: uuid.v4(),
           username: _usernameController.text,
           email: _emailController.text,

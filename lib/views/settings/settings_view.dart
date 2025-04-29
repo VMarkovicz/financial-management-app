@@ -1,14 +1,13 @@
 import 'package:financial_management_app/models/user_model.dart';
 import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/views/authentication/login_view.dart';
-import 'package:financial_management_app/views/settings/widgets/edit_profile.dart';
 import 'package:financial_management_app/views/settings/widgets/change_currency.dart';
+import 'package:financial_management_app/views/settings/widgets/edit_profile.dart';
 import 'package:financial_management_app/views/settings/widgets/profile_avatar.dart';
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/utils.dart';
 import 'package:provider/provider.dart';
 
 class SettingsView extends StatefulWidget {
@@ -20,7 +19,7 @@ class SettingsView extends StatefulWidget {
 
 class _SettingsViewState extends State<SettingsView> {
   late UserViewModel _userViewModel;
-  late final User _user;
+  late final UserModel _user;
 
   @override
   void initState() {
@@ -28,8 +27,6 @@ class _SettingsViewState extends State<SettingsView> {
     _userViewModel = context.read<UserViewModel>();
     Future.microtask(() => _userViewModel.loadUser());
   }
-
-  
 
   void _logout() {
     _userViewModel.logoutUser();

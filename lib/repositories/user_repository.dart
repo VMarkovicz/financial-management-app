@@ -8,19 +8,19 @@ class UserRepository extends ChangeNotifier {
 
   UserRepository(this._apiService);
 
-  Future<User> getUserData(id) => _apiService.getUserData(id);
+  Future<UserModel> getUserData(id) => _apiService.getUserData(id);
 
-  Future<User> createUser(User user) async {
+  Future<UserModel> createUser(UserModel user) async {
     final response = await _apiService.createUser(user);
     return response;
   }
 
-  Future<User> loginUser(String email, String password) async {
+  Future<UserModel> loginUser(String email, String password) async {
     final response = await _apiService.loginUser(email, password);
     return response;
   }
 
-  Future<User> updateUser(String nome) async {
+  Future<UserModel> updateUser(String nome) async {
     final response = await _apiService.updateUser(nome);
     return response;
   }
