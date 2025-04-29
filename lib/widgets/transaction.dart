@@ -1,58 +1,85 @@
+import 'package:financial_management_app/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 import 'package:financial_management_app/widgets/modal.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/theme/app_theme.dart';
 
-enum TransactionType { income, expense }
-
-class Transaction extends StatelessWidget {
-  final String title;
+class TransactionWidget extends StatelessWidget {
+  final String name;
   final String description;
   final double amount;
   final TransactionType type;
   final DateTime date;
   final String? currency;
+  final VoidCallback? onDelete;
+  final Function(Transaction)? onEdit; // Add onEdit callback
 
-  const Transaction({
+  const TransactionWidget({
     super.key,
-    required this.title,
+    required this.name,
     required this.description,
     required this.amount,
     required this.type,
     required this.date,
     this.currency = 'USD',
+    this.onDelete,
+    this.onEdit,
   });
 
   void _handleEdit(BuildContext context) {
-    final titleController = TextEditingController(text: title);
+    final nameController = TextEditingController(text: name);
     final descriptionController = TextEditingController(text: description);
     final amountController = TextEditingController(text: amount.toString());
+    TransactionType currentType = type;
 
     Modal.show(
       context: context,
       title: 'Edit Transaction',
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CustomTextField(
-            label: 'Title',
-            hint: 'Enter title',
-            controller: titleController,
-          ),
-          const SizedBox(height: 16),
-          CustomTextField(
-            label: 'Description',
-            hint: 'Enter description',
-            controller: descriptionController,
-          ),
-          const SizedBox(height: 16),
-          CustomTextField(
-            label: 'Amount',
-            hint: 'Enter amount',
-            controller: amountController,
-          ),
-        ],
+      body: StatefulBuilder(
+        builder: (context, setState) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomTextField(
+                label: 'Name',
+                hint: 'Enter name',
+                controller: nameController,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                label: 'Description',
+                hint: 'Enter description',
+                controller: descriptionController,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                label: 'Amount',
+                hint: 'Enter amount',
+                controller: amountController,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<TransactionType>(
+                value: currentType,
+                items: [
+                  DropdownMenuItem(
+                    value: TransactionType.income,
+                    child: Text('Income'),
+                  ),
+                  DropdownMenuItem(
+                    value: TransactionType.expense,
+                    child: Text('Expense'),
+                  ),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => currentType = value);
+                  }
+                },
+              ),
+            ],
+          );
+        },
       ),
       actions: [
         CustomButton(
@@ -64,7 +91,21 @@ class Transaction extends StatelessWidget {
           label: 'Save',
           width: 100,
           onPressed: () {
-            // TODO: Implement save logic
+            if (nameController.text.isEmpty || amountController.text.isEmpty) {
+              return;
+            }
+
+            final newTransaction = Transaction(
+              id: '', // ID should be handled by the repository
+              name: nameController.text,
+              description: descriptionController.text,
+              amount: double.tryParse(amountController.text) ?? amount,
+              type: currentType,
+              date: date,
+              userId: '', // UserID should be handled by the repository
+            );
+
+            onEdit?.call(newTransaction);
             Navigator.of(context).pop();
           },
         ),
@@ -98,7 +139,7 @@ class Transaction extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    name,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                   Text(description, style: TextStyle(color: Colors.grey[600])),
@@ -125,7 +166,9 @@ class Transaction extends StatelessWidget {
                     _handleEdit(context);
                     break;
                   case 'delete':
-                    // TODO: Handle delete action
+                    if (onDelete != null) {
+                      onDelete?.call();
+                    }
                     break;
                 }
               },

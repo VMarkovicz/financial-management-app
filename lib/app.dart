@@ -1,5 +1,7 @@
+import 'package:financial_management_app/repositories/transactions_repository.dart';
 import 'package:financial_management_app/repositories/user_repository.dart';
 import 'package:financial_management_app/services/api_service.dart';
+import 'package:financial_management_app/viewmodels/transactions_viewmodel.dart';
 import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/views/authentication/login_view.dart';
 import 'package:financial_management_app/views/authentication/register_view.dart';
@@ -16,16 +18,23 @@ import 'package:provider/provider.dart';
 class App extends StatelessWidget {
   late final ApiService apiService;
   late final UserRepository userRepository;
+  late final TransactionsRepository transactionsRepository;
 
   App({super.key}) {
     apiService = ApiService();
     userRepository = UserRepository(apiService);
+    transactionsRepository = TransactionsRepository(apiService);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => UserViewModel(userRepository),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserViewModel(userRepository)),
+        ChangeNotifierProvider(
+          create: (_) => TransactionsViewmodel(transactionsRepository),
+        ),
+      ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Financial Management App',

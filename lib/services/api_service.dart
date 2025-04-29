@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:financial_management_app/models/transaction_model.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 
+List<Transaction> mockTransactions = [];
 
 class ApiService {
   final _baseUrl = 'example';
@@ -34,5 +36,44 @@ class ApiService {
 
   Future<void> deleteUser(String id) async {
     mockUserData = '';
+  }
+
+  // Transactions
+  Future<List<Transaction>> getTransactions(String userId) async {
+    // Simulate a network call
+    await Future.delayed(Duration(seconds: 1));
+    return mockTransactions;
+  }
+
+  Future<void> addTransaction(Transaction transaction) async {
+    // Simulate a network call
+    await Future.delayed(Duration(seconds: 1));
+    mockTransactions.add(transaction);
+  }
+
+  Future<void> updateTransaction(Transaction transaction) async {
+    // Simulate a network call
+    await Future.delayed(Duration(seconds: 1));
+    final index = mockTransactions.indexWhere((t) => t.id == transaction.id);
+    if (index != -1) {
+      mockTransactions[index] = transaction;
+    }
+  }
+
+  Future<void> deleteTransaction(String transactionId) async {
+    await Future.delayed(Duration(seconds: 1));
+    mockTransactions.removeWhere((t) => t.id == transactionId);
+  }
+
+  Future<List<Transaction>> getTodaysTransaction(DateTime currentDate) async {
+    List<Transaction> todayTransactions =
+        mockTransactions.where((transaction) {
+          DateTime transactionDate = transaction.date;
+          return transactionDate.year == currentDate.year &&
+              transactionDate.month == currentDate.month &&
+              transactionDate.day == currentDate.day;
+        }).toList();
+
+    return todayTransactions;
   }
 }
