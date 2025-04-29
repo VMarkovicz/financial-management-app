@@ -2,5 +2,6 @@
   "[dart]": {
     "editor.tabSize": 2,
     "editor.insertSpaces": true
-  }
+  },
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

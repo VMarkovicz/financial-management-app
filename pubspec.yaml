@@ -41,6 +41,10 @@ dependencies:
   material_charts: ^0.0.26
   provider: ^6.1.4
   uuid: ^4.5.1
+  firebase_core:
+  firebase_database:
+  firebase_auth:
+  cloud_firestore:
 
 dev_dependencies:
   flutter_test:
