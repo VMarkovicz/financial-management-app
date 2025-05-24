@@ -1,5 +1,6 @@
 import 'package:financial_management_app/widgets/bar_chart.dart';
 import 'package:flutter/material.dart';
+
 import '../models/transaction_model.dart';
 import '../repositories/transactions_repository.dart';
 
@@ -9,7 +10,7 @@ class TransactionsViewmodel extends ChangeNotifier {
 
   TransactionsViewmodel(this._transactionsRepository);
 
-  List<Transaction> transactions = [];
+  List<TransactionModel> transactions = [];
   Map<DateTime, int> balanceByDay = {};
   double totalBalance = 0.0;
   bool busy = false;
@@ -24,7 +25,7 @@ class TransactionsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addTransaction(Transaction transaction) async {
+  Future<void> addTransaction(TransactionModel transaction) async {
     busy = true;
     notifyListeners();
     await _transactionsRepository.addTransaction(transaction);
@@ -34,7 +35,7 @@ class TransactionsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateTransaction(Transaction transaction) async {
+  Future<void> updateTransaction(TransactionModel transaction) async {
     busy = true;
     notifyListeners();
     await _transactionsRepository.updateTransaction(transaction);

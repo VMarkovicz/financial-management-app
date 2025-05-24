@@ -1,9 +1,9 @@
 import 'package:financial_management_app/models/transaction_model.dart';
-import 'package:flutter/material.dart';
-import 'package:financial_management_app/widgets/modal.dart';
-import 'package:financial_management_app/widgets/custom_text_field.dart';
-import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/theme/app_theme.dart';
+import 'package:financial_management_app/widgets/custom_button.dart';
+import 'package:financial_management_app/widgets/custom_text_field.dart';
+import 'package:financial_management_app/widgets/modal.dart';
+import 'package:flutter/material.dart';
 
 class TransactionWidget extends StatelessWidget {
   final String name;
@@ -13,7 +13,7 @@ class TransactionWidget extends StatelessWidget {
   final DateTime date;
   final String? currency;
   final VoidCallback? onDelete;
-  final Function(Transaction)? onEdit; // Add onEdit callback
+  final Function(TransactionModel)? onEdit; // Changed to TransactionModel
 
   const TransactionWidget({
     super.key,
@@ -95,7 +95,7 @@ class TransactionWidget extends StatelessWidget {
               return;
             }
 
-            final newTransaction = Transaction(
+            final newTransaction = TransactionModel(
               id: '', // ID should be handled by the repository
               name: nameController.text,
               description: descriptionController.text,

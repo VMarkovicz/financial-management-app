@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:financial_management_app/models/transaction_model.dart';
 import 'package:financial_management_app/widgets/bar_chart.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 
 import '../models/user_model.dart';
 
-List<Transaction> mockTransactions = [];
+List<TransactionModel> mockTransactions = [];
 
 class ApiService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -23,6 +24,7 @@ class ApiService {
     mockUserData = jsonEncode(user);
     return UserModel.fromJson(jsonDecode(mockUserData));
   }
+
 
   Future<UserModel> loginUser(String email, String password) async {
     var existingUser = await getUserData(mockUserData);
@@ -45,19 +47,19 @@ class ApiService {
   }
 
   // Transactions
-  Future<List<Transaction>> getTransactions(String userId) async {
+  Future<List<TransactionModel>> getTransactions(String userId) async {
     // Simulate a network call
     await Future.delayed(Duration(seconds: 1));
     return mockTransactions;
   }
 
-  Future<void> addTransaction(Transaction transaction) async {
+  Future<void> addTransaction(TransactionModel transaction) async {
     // Simulate a network call
     await Future.delayed(Duration(seconds: 1));
     mockTransactions.add(transaction);
   }
 
-  Future<void> updateTransaction(Transaction transaction) async {
+  Future<void> updateTransaction(TransactionModel transaction) async {
     // Simulate a network call
     await Future.delayed(Duration(seconds: 1));
     final index = mockTransactions.indexWhere((t) => t.id == transaction.id);
@@ -71,8 +73,10 @@ class ApiService {
     mockTransactions.removeWhere((t) => t.id == transactionId);
   }
 
-  Future<List<Transaction>> getTodaysTransaction(DateTime currentDate) async {
-    List<Transaction> todayTransactions =
+  Future<List<TransactionModel>> getTodaysTransaction(
+    DateTime currentDate,
+  ) async {
+    List<TransactionModel> todayTransactions =
         mockTransactions.where((transaction) {
           DateTime transactionDate = transaction.date;
           return transactionDate.year == currentDate.year &&

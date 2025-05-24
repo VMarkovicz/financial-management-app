@@ -8,15 +8,15 @@ class TransactionsRepository {
 
   TransactionsRepository(this._apiService);
 
-  Future<List<Transaction>> getTransactions(String userId) async {
+  Future<List<TransactionModel>> getTransactions(String userId) async {
     return _apiService.getTransactions(userId);
   }
 
-  Future<void> addTransaction(Transaction transaction) async {
+  Future<void> addTransaction(TransactionModel transaction) async {
     await _apiService.addTransaction(transaction);
   }
 
-  Future<void> updateTransaction(Transaction transaction) async {
+  Future<void> updateTransaction(TransactionModel transaction) async {
     await _apiService.updateTransaction(transaction);
   }
 
@@ -25,7 +25,7 @@ class TransactionsRepository {
   }
 
   Future<double> getTotalBalance(DateTime date) async {
-    List<Transaction> todayTransactions = await _apiService
+    List<TransactionModel> todayTransactions = await _apiService
         .getTodaysTransaction(date);
 
     double totalBalance = todayTransactions.fold(0.0, (sum, transaction) {
