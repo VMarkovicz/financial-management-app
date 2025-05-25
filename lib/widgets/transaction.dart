@@ -6,6 +6,7 @@ import 'package:financial_management_app/widgets/modal.dart';
 import 'package:flutter/material.dart';
 
 class TransactionWidget extends StatelessWidget {
+  final String id;
   final String name;
   final String description;
   final double amount;
@@ -17,6 +18,7 @@ class TransactionWidget extends StatelessWidget {
 
   const TransactionWidget({
     super.key,
+    required this.id,
     required this.name,
     required this.description,
     required this.amount,
@@ -96,13 +98,12 @@ class TransactionWidget extends StatelessWidget {
             }
 
             final newTransaction = TransactionModel(
-              id: '', // ID should be handled by the repository
+              id: id,
               name: nameController.text,
               description: descriptionController.text,
               amount: double.tryParse(amountController.text) ?? amount,
               type: currentType,
               date: date,
-              userId: '', // UserID should be handled by the repository
             );
 
             onEdit?.call(newTransaction);

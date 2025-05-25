@@ -25,11 +25,10 @@ class _SettingsViewState extends State<SettingsView> {
   void initState() {
     super.initState();
     _userViewModel = context.read<UserViewModel>();
-    Future.microtask(() => _userViewModel.loadUser());
   }
 
-  void _logout() {
-    _userViewModel.logoutUser();
+  void _logout() async {
+    await _userViewModel.logoutUser();
     Get.off(
       () => const LoginView(),
       preventDuplicates: true,
@@ -37,9 +36,14 @@ class _SettingsViewState extends State<SettingsView> {
     );
   }
 
-  // void _deleteAccount(_user) {
-  //   _userViewModel.deleteUser(_user.id);
-  // }
+  void _deleteAccount(_user) async {
+    await _userViewModel.deleteUser(_user.id);
+    Get.off(
+      () => const LoginView(),
+      preventDuplicates: true,
+      transition: Transition.noTransition,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +62,7 @@ class _SettingsViewState extends State<SettingsView> {
                         ProfileAvatar(
                           // use the userViewModel to get the user data
                           username: userViewModel.user.username,
+                          imageUrl: userViewModel.user.profilePictureUrl ?? '',
                         ),
                         const SizedBox(height: 16),
                         EditProfile(user: userViewModel.user),
@@ -78,7 +83,9 @@ class _SettingsViewState extends State<SettingsView> {
                         CustomButton(
                           label: "Delete Account",
                           backgroundColor: ButtonType.secondary,
-                          onPressed: () {},
+                          onPressed: () {
+                            _deleteAccount(userViewModel.user);
+                          },
                         ),
                       ],
                     ),

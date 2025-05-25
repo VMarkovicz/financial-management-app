@@ -1,23 +1,34 @@
+import 'package:financial_management_app/services/user_service.dart';
 import 'package:financial_management_app/widgets/bar_chart.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../models/transaction_model.dart';
-import '../services/api_service.dart';
+import '../services/transactions_service.dart';
 
 class TransactionsRepository {
   final ApiService _apiService;
+  final UserService _userService = UserService();
 
   TransactionsRepository(this._apiService);
 
-  Future<List<TransactionModel>> getTransactions(String userId) async {
-    return _apiService.getTransactions(userId);
+  Future<List<TransactionModel>> getTransactions() async {
+    return _apiService.getTransactions();
   }
 
-  Future<void> addTransaction(TransactionModel transaction) async {
-    await _apiService.addTransaction(transaction);
+  Future<TransactionModel> addTransaction(
+    TransactionCreationModel transaction,
+  ) async {
+    try {
+      return await _apiService.addTransaction(transaction);
+    } catch (e) {
+      throw Exception("Failed to add transaction: $e");
+    }
   }
 
-  Future<void> updateTransaction(TransactionModel transaction) async {
-    await _apiService.updateTransaction(transaction);
+  Future<TransactionModel> updateTransaction(
+    TransactionModel transaction,
+  ) async {
+    return await _apiService.updateTransaction(transaction);
   }
 
   Future<void> deleteTransaction(String transactionId) async {

@@ -1,5 +1,6 @@
 import 'package:financial_management_app/models/user_model.dart';
 import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
+import 'package:financial_management_app/views/authentication/login_view.dart';
 import 'package:financial_management_app/views/home/home_view.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
@@ -17,26 +18,15 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
-  late final UserViewModel _userViewModel;
-
   var uuid = Uuid();
 
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _usernameController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
-
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    _userViewModel = context.read<UserViewModel>();
-  }
-
-  void _register() {
+  void _register(UserViewModel userViewModel) {
     if (_emailController.text.isEmpty ||
         _usernameController.text.isEmpty ||
         _passwordController.text.isEmpty ||
@@ -57,18 +47,12 @@ class _RegisterViewState extends State<RegisterView> {
       return;
     }
     try {
-      _userViewModel.createUser(
-        UserModel(
-          id: uuid.v4(),
+      userViewModel.createUser(
+        UserRegisterModel(
           username: _usernameController.text,
           email: _emailController.text,
           password: _passwordController.text,
         ),
-      );
-      Get.off(
-        () => const HomeView(),
-        preventDuplicates: true,
-        transition: Transition.noTransition,
       );
     } catch (e) {
       Get.snackbar(
@@ -81,6 +65,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    final userViewModel = context.watch<UserViewModel>();
     return Scaffold(
       body: Center(
         child: Padding(
@@ -129,9 +114,10 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
 
                 CustomButton(
-                  label: "Sign Un",
+                  label: "Sign Up",
                   backgroundColor: ButtonType.primary,
-                  onPressed: () => _register(),
+                  onPressed: () => _register(userViewModel),
+                  isLoading: userViewModel.busy,
                 ),
                 RichText(
                   text: TextSpan(
@@ -145,7 +131,7 @@ class _RegisterViewState extends State<RegisterView> {
                         TapGestureRecognizer()
                           ..onTap = () {
                             Get.to(
-                              () => const HomeView(),
+                              () => const LoginView(),
                               preventDuplicates: true,
                               transition: Transition.noTransition,
                             );

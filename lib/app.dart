@@ -1,6 +1,6 @@
 import 'package:financial_management_app/repositories/transactions_repository.dart';
 import 'package:financial_management_app/repositories/user_repository.dart';
-import 'package:financial_management_app/services/api_service.dart';
+import 'package:financial_management_app/services/transactions_service.dart';
 import 'package:financial_management_app/viewmodels/transactions_viewmodel.dart';
 import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/views/authentication/login_view.dart';

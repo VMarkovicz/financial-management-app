@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 
 class ProfileAvatar extends StatelessWidget {
   final String username;
+  final String imageUrl;
 
-  const ProfileAvatar({super.key, required this.username});
+  const ProfileAvatar({
+    super.key,
+    required this.username,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +26,11 @@ class ProfileAvatar extends StatelessWidget {
                 CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.grey.shade200,
-                  child: Icon(Icons.person, size: 60),
+                  child:
+                      imageUrl.isEmpty
+                          ? Icon(Icons.person, size: 60, color: Colors.grey)
+                          : null,
+                  backgroundImage: NetworkImage(imageUrl),
                 ),
                 Positioned(
                   bottom: 0,

@@ -1,3 +1,4 @@
+import 'package:financial_management_app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -37,7 +38,7 @@ class CustomTextField extends StatelessWidget {
           labelText: label,
           hintText: hint,
           focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.indigoAccent, width: 2.0),
+            borderSide: BorderSide(color: AppTheme.success, width: 2.0),
           ),
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(

@@ -13,6 +13,7 @@ class CustomButton extends StatelessWidget {
   final ButtonType backgroundColor;
   final double? fontSize;
   final FontWeightType fontWeightType;
+  final bool isLoading;
 
   const CustomButton({
     super.key,
@@ -23,6 +24,7 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor = ButtonType.primary,
     this.fontSize,
     this.fontWeightType = FontWeightType.normal,
+    this.isLoading = false,
   });
 
   _getBackgoundColor() {
@@ -75,17 +77,24 @@ class CustomButton extends StatelessWidget {
           ),
         ),
         onPressed: onPressed,
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: fontSize ?? 18,
-            fontWeight: _getFontWeight(),
-            color:
-                backgroundColor == ButtonType.ghost
-                    ? AppTheme.textDark
-                    : Colors.white,
-          ),
-        ),
+        child:
+            isLoading
+                ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(color: Colors.white),
+                )
+                : Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: fontSize ?? 18,
+                    fontWeight: _getFontWeight(),
+                    color:
+                        backgroundColor == ButtonType.ghost
+                            ? AppTheme.textDark
+                            : Colors.white,
+                  ),
+                ),
       ),
     );
   }

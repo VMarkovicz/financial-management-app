@@ -5,6 +5,7 @@ import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_text_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
@@ -16,19 +17,12 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  late final UserViewModel _userViewModel;
-
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    _userViewModel = context.read<UserViewModel>();
-  }
-
-  void _login() {
+  void _login() async {
+    final userViewModel = context.read<UserViewModel>();
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       Get.snackbar(
         "Error",
@@ -37,10 +31,15 @@ class _LoginViewState extends State<LoginView> {
       );
       return;
     }
-    try{
-      _userViewModel.loginUser(
-        _emailController.text, 
-        _passwordController.text
+    try {
+      var user = await userViewModel.loginUser(
+        _emailController.text,
+        _passwordController.text,
+      );
+      Fluttertoast.showToast(
+        msg: "Welcome back, ${user.username}!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
       );
       Get.off(
         () => const HomeView(),
@@ -58,6 +57,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final userViewModel = context.watch<UserViewModel>();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 64.0),
@@ -89,8 +89,8 @@ class _LoginViewState extends State<LoginView> {
               CustomButton(
                 label: "Sign In",
                 backgroundColor: ButtonType.primary,
-                onPressed:
-                    () => _login(),
+                onPressed: () => _login(),
+                isLoading: userViewModel.busy,
               ),
               Column(
                 spacing: 16,

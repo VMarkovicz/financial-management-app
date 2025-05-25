@@ -1,12 +1,12 @@
 import 'package:financial_management_app/widgets/bar_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../models/transaction_model.dart';
 import '../repositories/transactions_repository.dart';
 
 class TransactionsViewmodel extends ChangeNotifier {
   final TransactionsRepository _transactionsRepository;
-  String? _currentUserId;
 
   TransactionsViewmodel(this._transactionsRepository);
 
@@ -16,42 +16,102 @@ class TransactionsViewmodel extends ChangeNotifier {
   bool busy = false;
   bool busyForCalendar = false;
 
-  Future<void> loadTransactions(String userId) async {
-    _currentUserId = userId;
+  Future<void> loadTransactions() async {
     busy = true;
     notifyListeners();
-    transactions = await _transactionsRepository.getTransactions(userId);
-    busy = false;
-    notifyListeners();
+    try {
+      transactions = await _transactionsRepository.getTransactions();
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Failed to load transactions: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 10,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      transactions = [];
+    } finally {
+      busy = false;
+      notifyListeners();
+    }
   }
 
-  Future<void> addTransaction(TransactionModel transaction) async {
+  Future<void> addTransaction(
+    TransactionCreationModel transaction,
+    Future<void> Function(double) updateBalance,
+  ) async {
     busy = true;
     notifyListeners();
-    await _transactionsRepository.addTransaction(transaction);
-    await loadTransactions(transaction.userId);
-    await getTotalTodayBalance();
-    busy = false;
-    notifyListeners();
+    try {
+      var newTransaction = await _transactionsRepository.addTransaction(
+        transaction,
+      );
+      transactions.add(newTransaction);
+      await updateBalance(
+        transaction.type == TransactionType.income
+            ? transaction.amount
+            : -transaction.amount,
+      );
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Failed to add transaction: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 10,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } finally {
+      busy = false;
+      notifyListeners();
+    }
   }
 
   Future<void> updateTransaction(TransactionModel transaction) async {
     busy = true;
     notifyListeners();
-    await _transactionsRepository.updateTransaction(transaction);
-    await loadTransactions(transaction.userId);
+    var updatedTransaction = await _transactionsRepository.updateTransaction(
+      transaction,
+    );
+    transactions =
+        transactions.map((t) {
+          return t.id == updatedTransaction.id ? updatedTransaction : t;
+        }).toList();
     busy = false;
     notifyListeners();
   }
 
-  Future<void> deleteTransaction(String transactionId) async {
-    if (_currentUserId == null) return;
-
+  Future<void> deleteTransaction(
+    String transactionId,
+    Future<void> Function(double) updateBalance,
+  ) async {
     busy = true;
     notifyListeners();
     await _transactionsRepository.deleteTransaction(transactionId);
-    await loadTransactions(_currentUserId!);
-    await getTotalTodayBalance();
+    var deletedTransaction = transactions.firstWhere(
+      (t) => t.id == transactionId,
+      orElse:
+          () => TransactionModel(
+            id: '',
+            name: '',
+            amount: 0,
+            type: TransactionType.income,
+            date: DateTime.now(),
+            description: '',
+          ),
+    );
+    if (deletedTransaction.id.isNotEmpty) {
+      transactions.removeWhere((t) => t.id == transactionId);
+      await updateBalance(
+        deletedTransaction.type == TransactionType.income
+            ? -deletedTransaction.amount
+            : deletedTransaction.amount,
+      );
+    }
+    await loadTransactions();
     busy = false;
     notifyListeners();
   }

@@ -1,6 +1,7 @@
 import 'package:financial_management_app/models/transaction_model.dart';
 import 'package:financial_management_app/theme/app_theme.dart';
 import 'package:financial_management_app/viewmodels/transactions_viewmodel.dart';
+import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:financial_management_app/widgets/custom_navigation_bar.dart';
@@ -23,6 +24,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   String _selectedCurrency = 'USD';
   late TransactionsViewmodel _transactionsViewmodel;
+  late UserViewModel _userViewModel;
   TransactionType _currentType = TransactionType.income;
 
   var uuid = Uuid();
@@ -35,7 +37,8 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     _transactionsViewmodel = context.read<TransactionsViewmodel>();
-    Future.microtask(() => _transactionsViewmodel.loadTransactions('1'));
+    _userViewModel = context.read<UserViewModel>();
+    Future.microtask(() => _transactionsViewmodel.loadTransactions());
     Future.microtask(() => _transactionsViewmodel.getTotalTodayBalance());
   }
 
@@ -55,9 +58,7 @@ class _HomeViewState extends State<HomeView> {
       return;
     }
 
-    final transaction = TransactionModel(
-      id: uuid.v4(),
-      userId: '1', // TODO: Get actual user ID from UserViewModel
+    final transaction = TransactionCreationModel(
       name: nameController.text,
       description: descriptionController.text,
       amount: double.parse(amountController.text),
@@ -65,7 +66,10 @@ class _HomeViewState extends State<HomeView> {
       date: DateTime.now(),
     );
 
-    _transactionsViewmodel.addTransaction(transaction);
+    _transactionsViewmodel.addTransaction(
+      transaction,
+      _userViewModel.updateBalance,
+    );
 
     nameController.clear();
     descriptionController.clear();
@@ -170,7 +174,7 @@ class _HomeViewState extends State<HomeView> {
                 padding: EdgeInsets.symmetric(vertical: 46.0),
                 child: Column(
                   children: [
-                    Consumer<TransactionsViewmodel>(
+                    Consumer<UserViewModel>(
                       builder: (context, viewModel, child) {
                         if (viewModel.busy) {
                           return const Center(
@@ -184,7 +188,7 @@ class _HomeViewState extends State<HomeView> {
                         }
 
                         return Text(
-                          "${viewModel.totalBalance} $_selectedCurrency",
+                          "${viewModel.user.balance} $_selectedCurrency",
                           style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w900,
@@ -220,6 +224,7 @@ class _HomeViewState extends State<HomeView> {
                       itemBuilder: (context, index) {
                         final transaction = viewModel.transactions[index];
                         return TransactionWidget(
+                          id: transaction.id,
                           name: transaction.name,
                           description: transaction.description,
                           amount: transaction.amount,
@@ -227,7 +232,13 @@ class _HomeViewState extends State<HomeView> {
                           currency: _selectedCurrency,
                           type: transaction.type,
                           onDelete: () {
-                            viewModel.deleteTransaction(transaction.id);
+                            viewModel.deleteTransaction(
+                              transaction.id,
+                              _userViewModel.updateBalance,
+                            );
+                          },
+                          onEdit: (newTransaction) {
+                            viewModel.updateTransaction(newTransaction);
                           },
                         );
                       },

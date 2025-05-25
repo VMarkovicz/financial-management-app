@@ -46,6 +46,7 @@ dependencies:
   firebase_auth:
   cloud_firestore:
   flutter_dotenv:
+  fluttertoast: ^8.2.12
 
 dev_dependencies:
   flutter_test:
