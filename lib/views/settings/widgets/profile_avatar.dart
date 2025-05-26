@@ -1,14 +1,20 @@
+import 'dart:io';
+
 import 'package:financial_management_app/widgets/paper_container.dart';
 import 'package:flutter/material.dart';
 
 class ProfileAvatar extends StatelessWidget {
   final String username;
   final String imageUrl;
+  final VoidCallback? onCameraTap;
+  final bool isLoading;
 
   const ProfileAvatar({
     super.key,
     required this.username,
     required this.imageUrl,
+    this.onCameraTap,
+    this.isLoading = false,
   });
 
   @override
@@ -26,23 +32,28 @@ class ProfileAvatar extends StatelessWidget {
                 CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.grey.shade200,
+                  backgroundImage:
+                      isLoading
+                          ? null
+                          : imageUrl.isNotEmpty
+                          ? FileImage(File(imageUrl)) as ImageProvider
+                          : null,
                   child:
-                      imageUrl.isEmpty
+                      isLoading
+                          ? CircularProgressIndicator()
+                          : imageUrl.isEmpty
                           ? Icon(Icons.person, size: 60, color: Colors.grey)
                           : null,
-                  backgroundImage: NetworkImage(imageUrl),
                 ),
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.greenAccent,
-                    child: Icon(
-                      Icons.camera_alt,
-                      color: Colors.white,
-                      size: 20,
+                  child: IconButton(
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.greenAccent,
                     ),
+                    icon: Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                    onPressed: () => onCameraTap?.call(),
                   ),
                 ),
               ],
