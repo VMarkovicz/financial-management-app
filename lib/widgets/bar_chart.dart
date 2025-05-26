@@ -14,8 +14,23 @@ class BarChart extends StatelessWidget {
 
   const BarChart({super.key, required this.data, this.barColor = Colors.blue});
 
-  @override
+ @override
   Widget build(BuildContext context) {
+    final allZero = data.isEmpty || data.every((item) => item.value == 0.0);
+
+    if (allZero) {
+      return Container(
+        height: 150,
+        width: double.infinity,
+        alignment: Alignment.center,
+        color: Colors.white,
+        child: const Text(
+          'No data available',
+          style: TextStyle(color: Colors.grey, fontSize: 16),
+        ),
+      );
+    }
+
     return MaterialBarChart(
       width: double.infinity,
       height: 150,
@@ -30,10 +45,9 @@ class BarChart extends StatelessWidget {
               )
               .toList(),
       style: BarChartStyle(
-        gridColor: Colors.grey.shade300,
         backgroundColor: Colors.white,
         labelStyle: const TextStyle(fontSize: 14, color: Colors.black),
-        valueStyle: const TextStyle(fontSize: 12),
+        valueStyle: const TextStyle(fontSize: 12, color: Colors.black),
         barSpacing: 0.3,
         cornerRadius: 6.0,
         gradientEffect: false,

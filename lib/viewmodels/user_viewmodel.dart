@@ -48,8 +48,11 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> updateBalance(double value) async {
+    busy = true;
+    notifyListeners();
     final response = await _userRepository.updateBalance(value);
     user.balance = response;
+    busy = false;
     notifyListeners();
   }
 

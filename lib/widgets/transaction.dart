@@ -148,7 +148,7 @@ class TransactionWidget extends StatelessWidget {
               ),
             ),
             Text(
-              '${currency} ${type == TransactionType.expense ? '-' : '+'}${amount.toStringAsFixed(2)}',
+              '${currency} ${type == TransactionType.expense ? '' : '+'}${amount.toStringAsFixed(2)}',
               style: TextStyle(
                 color:
                     type == TransactionType.income

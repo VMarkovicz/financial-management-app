@@ -28,13 +28,16 @@ class _GraphViewState extends State<GraphView> {
     super.initState();
     _transactionsViewmodel = context.read<TransactionsViewmodel>();
     _updateWeekRange();
-    _fetchData();
+    Future.microtask(() => _fetchData());
   }
 
   void _updateWeekRange() {
     _startOfWeek = _selectedDate.subtract(
-      Duration(days: _selectedDate.weekday - 1),
+      Duration(days: _selectedDate.weekday),
     );
+    // 
+    debugPrint("Start of week: $_startOfWeek.weekday");
+    debugPrint(_startOfWeek.weekday.toString());
     _endOfWeek = _startOfWeek.add(const Duration(days: 6));
   }
 

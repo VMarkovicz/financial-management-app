@@ -1,18 +1,15 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:financial_management_app/models/transaction_model.dart';
-import 'package:financial_management_app/services/user_service.dart';
 import 'package:financial_management_app/widgets/bar_chart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import '../models/user_model.dart';
 
 class ApiService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final random = Random();
+
   Future<List<TransactionModel>> getTransactions() async {
     final user = _auth.currentUser;
     if (user == null) {
@@ -113,76 +110,184 @@ class ApiService {
     await userDoc.collection('transactions').doc(transactionId).delete();
   }
 
-  Future<List<TransactionModel>> getTodaysTransaction(
+    Future<double> getTotalMonthlyBalance(
     DateTime currentDate,
   ) async {
-    return [];
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in.');
+    }
+    final userDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+    if (userDoc == null) {
+      throw Exception('User document not found.');
+    }
+    try {
+      var transactionsSnapshot =
+          await userDoc
+            .collection('transactions')
+            .where('date', isGreaterThanOrEqualTo: DateTime(currentDate.year, currentDate.month, 1).toIso8601String())
+            .where('date', isLessThanOrEqualTo: DateTime(currentDate.year, currentDate.month + 1, 0).toIso8601String())
+            .aggregate(sum('amount'))
+            .get();
+
+      return transactionsSnapshot.getSum('amount') ?? 0.0;
+    } catch (e) {
+      throw Exception('Failed to fetch transactions: $e');
+    }
   }
 
-  Future<Map<DateTime, int>> getDayBalanceByMonth(DateTime date) async {
-    await Future.delayed(Duration(seconds: 1));
-    /*     if (date.month == 4) {
-      return {
-        DateTime(2025, 4, 6): 1,
-        DateTime(2025, 4, 7): 2,
-        DateTime(2025, 4, 8): 1,
-        DateTime(2025, 4, 9): 2,
-        DateTime(2025, 4, 13): 1,
-      };
+  Future<double> getTotalBalanceByDay(
+    DateTime currentDate,
+  ) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in.');
     }
-    if (date.month == 5) {
-      return {
-        DateTime(2025, 5, 6): 1,
-        DateTime(2025, 5, 7): 2,
-        DateTime(2025, 5, 8): 1,
-        DateTime(2025, 5, 9): 2,
-        DateTime(2025, 5, 13): 1,
-      };
+    final userDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+    if (userDoc == null) {
+      throw Exception('User document not found.');
     }
-    if (date.month == 3) {
-      return {
-        DateTime(2025, 3, 6): 1,
-        DateTime(2025, 3, 7): 2,
-        DateTime(2025, 3, 8): 1,
-        DateTime(2025, 3, 9): 2,
-        DateTime(2025, 3, 13): 1,
-      };
-    } else {
-      return {};
-    } */
+    try {
+      var transactionsSnapshot =
+            await userDoc
+              .collection('transactions')
+              .where('date', isGreaterThanOrEqualTo: DateTime(currentDate.year, currentDate.month, currentDate.day).toIso8601String())
+              .where('date', isLessThanOrEqualTo: DateTime(currentDate.year, currentDate.month, currentDate.day, 23, 59, 59).toIso8601String())
+              .aggregate(sum('amount'))
+              .get();
 
-    return {};
+      return transactionsSnapshot.getSum('amount') ?? 0.0;
+    } catch (e) {
+      throw Exception('Failed to fetch transactions: $e');
+    }
   }
 
-  Future<List<ChartData>> getExpensesByWeek(
+  Future<List<TransactionModel>> getDayBalanceByMonth(
+    DateTime currentDate,
+  ) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in.');
+    }
+    final userDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+    if (userDoc == null) {
+      throw Exception('User document not found.');
+    }
+    try {
+      var transactionsSnapshot =
+            await userDoc
+              .collection('transactions')
+              .where('date', isGreaterThanOrEqualTo: DateTime(currentDate.year, currentDate.month, 1).toIso8601String())
+              .where('date', isLessThanOrEqualTo: DateTime(currentDate.year, currentDate.month + 1, 0).toIso8601String())
+              .get();
+
+      if (transactionsSnapshot.docs.isEmpty) {
+        return [];
+      }
+
+      return transactionsSnapshot.docs.map((doc) {
+        return TransactionModel.fromJson({...doc.data(), 'id': doc.id});
+      }).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch transactions: $e');
+    }
+  }
+
+  Future<List<TransactionModel>> getExpensesByWeek(
     DateTime weekStart,
     DateTime weekEnd,
   ) async {
-    await Future.delayed(Duration(milliseconds: 200));
-    return [
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Sun"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Mon"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Tue"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Wed"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Thu"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Fri"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Sat"),
-    ];
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in.');
+    }
+    final userDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+    if (userDoc == null) {
+      throw Exception('User document not found.');
+    }
+    try {
+      var transactionsSnapshot =
+          await userDoc
+              .collection('transactions')
+              .where('date', isGreaterThanOrEqualTo: weekStart.toIso8601String())
+              .where('date', isLessThanOrEqualTo: weekEnd.toIso8601String())
+              .where('type', isEqualTo: "expense")
+              .get();
+
+      var transactions =
+          transactionsSnapshot.docs.map((doc) {
+            return TransactionModel.fromJson({...doc.data(), 'id': doc.id});
+          }).toList();
+
+      debugPrint('Found ${transactions.length} expense transactions:');
+      for (var transaction in transactions) {
+        debugPrint(
+          '  - ${transaction.name}: ${transaction.amount} on ${transaction.date}',
+        );
+      }
+      if (transactionsSnapshot.docs.isEmpty) {
+        return [];
+      }
+
+      return transactionsSnapshot.docs.map((doc) {
+        return TransactionModel.fromJson({...doc.data(), 'id': doc.id});
+      }).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch transactions: $e');
+    }
   }
 
-  Future<List<ChartData>> getIncomesByWeek(
+  Future<List<TransactionModel>> getIncomesByWeek(
     DateTime weekStart,
     DateTime weekEnd,
   ) async {
-    await Future.delayed(Duration(milliseconds: 200));
-    return [
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Sun"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Mon"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Tue"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Wed"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Thu"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Fri"),
-      ChartData(value: (100 + random.nextInt(1100)).toDouble(), label: "Sat"),
-    ];
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in.');
+    }
+    final userDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+    if (userDoc == null) {
+      throw Exception('User document not found.');
+    }
+    try {
+      var transactionsSnapshot =
+          await userDoc
+              .collection('transactions')
+              .where('date', isGreaterThanOrEqualTo: weekStart.toIso8601String())
+              .where('date', isLessThanOrEqualTo: weekEnd.toIso8601String())
+              .where('type', isEqualTo: "income")
+              .get();
+
+      var transactions =
+          transactionsSnapshot.docs.map((doc) {
+            return TransactionModel.fromJson({...doc.data(), 'id': doc.id});
+          }).toList();
+
+      debugPrint('Found ${transactions.length} income transactions:');
+      for (var transaction in transactions) {
+        debugPrint(
+          '  - ${transaction.name}: ${transaction.amount} on ${transaction.date}',
+        );
+      }
+      if (transactionsSnapshot.docs.isEmpty) {
+        return [];
+      }
+
+      return transactionsSnapshot.docs.map((doc) {
+        return TransactionModel.fromJson({...doc.data(), 'id': doc.id});
+      }).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch transactions: $e');
+    }
   }
 }

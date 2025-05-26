@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:financial_management_app/services/user_service.dart';
 import 'package:financial_management_app/widgets/bar_chart.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../models/transaction_model.dart';
@@ -8,6 +11,7 @@ import '../services/transactions_service.dart';
 class TransactionsRepository {
   final ApiService _apiService;
   final UserService _userService = UserService();
+  final random = Random();
 
   TransactionsRepository(this._apiService);
 
@@ -35,34 +39,98 @@ class TransactionsRepository {
     await _apiService.deleteTransaction(transactionId);
   }
 
-  Future<double> getTotalBalance(DateTime date) async {
-    List<TransactionModel> todayTransactions = await _apiService
-        .getTodaysTransaction(date);
 
-    double totalBalance = todayTransactions.fold(0.0, (sum, transaction) {
-      return transaction.type == TransactionType.income
-          ? sum + transaction.amount
-          : sum - transaction.amount;
-    });
-
-    return totalBalance;
+  //this is used to get the transactions for the home view
+  Future<double> getTotalMonthlyBalance(DateTime date) async {
+    return await _apiService.getTotalMonthlyBalance(date);
   }
 
+  // This method is used to get the total balance for a specific day - calendar view
+  Future<double> getTotalBalanceByDay(DateTime date) async {
+    return await _apiService.getTotalBalanceByDay(date);
+  }
+
+  // This method is used to get the balance by day for a specific month - calendar view
   Future<Map<DateTime, int>> getDayBalanceByMonth(DateTime date) async {
-    return _apiService.getDayBalanceByMonth(date);
-  }
+    var transactions = _apiService.getDayBalanceByMonth(date);
+    return new Map();
+  } 
 
   Future<List<ChartData>> getIncomesByWeek(
     DateTime weekStart,
     DateTime weekEnd,
   ) async {
-    return _apiService.getIncomesByWeek(weekStart, weekEnd);
+    var transactions = await _apiService.getIncomesByWeek(weekStart, weekEnd);
+
+    Map<String, double> dailyTotals = _defaultDailyTotals();
+
+    for (var transaction in transactions) {
+      String dayLabel = _getDayLabel(transaction.date.weekday);
+      dailyTotals[dayLabel] = (dailyTotals[dayLabel] ?? 0.0) + transaction.amount;
+    }
+    debugPrint("Week start: $weekStart, Week end: $weekEnd");
+    dailyTotals.entries.forEach((entry) {
+      debugPrint("Day: ${entry.key}, Amount: ${entry.value}");
+    });
+
+    return dailyTotals.entries.map((entry) {
+      return ChartData(value: entry.value, label: entry.key);
+    }).toList();
   }
 
   Future<List<ChartData>> getExpensesByWeek(
     DateTime weekStart,
     DateTime weekEnd,
   ) async {
-    return _apiService.getExpensesByWeek(weekStart, weekEnd);
+    var transactions = await _apiService.getExpensesByWeek(weekStart, weekEnd);
+
+    Map<String, double> dailyTotals = _defaultDailyTotals();
+
+    for (var transaction in transactions) {
+      String dayLabel = _getDayLabel(transaction.date.weekday);
+      dailyTotals[dayLabel] = (dailyTotals[dayLabel] ?? 0.0) + transaction.amount.abs();
+    }
+
+    return dailyTotals.entries.map((entry) {
+      return ChartData(
+        value: entry.value,
+        label: entry.key,
+      );
+    }).toList();
+  }
+  
+  Map<String, double> _defaultDailyTotals() {
+    return {
+      'Sun': 0.0,
+      'Mon': 0.0,
+      'Tue': 0.0,
+      'Wed': 0.0,
+      'Thu': 0.0,
+      'Fri': 0.0,
+      'Sat': 0.0,
+    };
+  }
+
+  String _getDayLabel(int weekday) {
+    switch (weekday) {
+      case DateTime.sunday:
+        return 'Sun';
+      case DateTime.monday:
+        return 'Mon';
+      case DateTime.tuesday:
+        return 'Tue';
+      case DateTime.wednesday:
+        return 'Wed';
+      case DateTime.thursday:
+        return 'Thu';
+      case DateTime.friday:
+        return 'Fri';
+      case DateTime.saturday:
+        return 'Sat';
+      default:
+        return '';
+    }
   }
 }
+
+

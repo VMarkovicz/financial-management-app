@@ -39,7 +39,7 @@ class _HomeViewState extends State<HomeView> {
     _transactionsViewmodel = context.read<TransactionsViewmodel>();
     _userViewModel = context.read<UserViewModel>();
     Future.microtask(() => _transactionsViewmodel.loadTransactions());
-    Future.microtask(() => _transactionsViewmodel.getTotalTodayBalance());
+    Future.microtask(() => _transactionsViewmodel.getTotalMonthlyBalance());
   }
 
   void _createTransaction() {
@@ -61,7 +61,9 @@ class _HomeViewState extends State<HomeView> {
     final transaction = TransactionCreationModel(
       name: nameController.text,
       description: descriptionController.text,
-      amount: double.parse(amountController.text),
+      amount: _currentType == TransactionType.income
+          ? double.parse(amountController.text)
+          : -double.parse(amountController.text),
       type: _currentType,
       date: DateTime.now(),
     );
@@ -188,7 +190,7 @@ class _HomeViewState extends State<HomeView> {
                         }
 
                         return Text(
-                          "${viewModel.user.balance} $_selectedCurrency",
+                          "${_transactionsViewmodel.totalMonthlyBalance} $_selectedCurrency",
                           style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w900,

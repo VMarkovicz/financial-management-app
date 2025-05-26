@@ -12,7 +12,8 @@ class TransactionsViewmodel extends ChangeNotifier {
 
   List<TransactionModel> transactions = [];
   Map<DateTime, int> balanceByDay = {};
-  double totalBalance = 0.0;
+  double totalMonthlyBalance = 0.0;
+  double totalBalanceByDay = 0.0;
   bool busy = false;
   bool busyForCalendar = false;
 
@@ -54,6 +55,10 @@ class TransactionsViewmodel extends ChangeNotifier {
             ? transaction.amount
             : -transaction.amount,
       );
+      totalMonthlyBalance +=
+          transaction.type == TransactionType.income
+              ? transaction.amount
+              : -transaction.amount;
     } catch (e) {
       Fluttertoast.showToast(
         msg: "Failed to add transaction: $e",
@@ -110,29 +115,36 @@ class TransactionsViewmodel extends ChangeNotifier {
             ? -deletedTransaction.amount
             : deletedTransaction.amount,
       );
+      totalMonthlyBalance +=
+          deletedTransaction.type == TransactionType.income
+              ? -deletedTransaction.amount
+              : deletedTransaction.amount;
     }
     await loadTransactions();
     busy = false;
     notifyListeners();
   }
 
-  Future<void> getTotalTodayBalance() async {
+  // This method is used to get the transactions for the home view
+  Future<void> getTotalMonthlyBalance() async {
     busy = true;
     notifyListeners();
     DateTime today = DateTime.now();
-    totalBalance = await _transactionsRepository.getTotalBalance(today);
+    totalMonthlyBalance = await _transactionsRepository.getTotalMonthlyBalance(today);
     busy = false;
     notifyListeners();
   }
 
+  // This method is used to get the total balance for a specific day - calendar view
   Future<void> getTotalBalanceByDay(DateTime date) async {
     busy = true;
     notifyListeners();
-    totalBalance = await _transactionsRepository.getTotalBalance(date);
+    totalBalanceByDay = await _transactionsRepository.getTotalBalanceByDay(date);
     busy = false;
     notifyListeners();
   }
 
+  // This method is used to get the balance by day for a specific month - calendar view
   Future<void> getDayBalanceByMonth(DateTime date) async {
     busyForCalendar = true;
     notifyListeners();
@@ -160,6 +172,7 @@ class TransactionsViewmodel extends ChangeNotifier {
       weekStart,
       weekEnd,
     );
+
     busy = false;
     notifyListeners();
     return expenses;

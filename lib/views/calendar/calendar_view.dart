@@ -87,7 +87,7 @@ class _CalendarViewState extends State<CalendarView> {
                             return const CircularProgressIndicator();
                           }
                           return Text(
-                            '${viewModel.totalBalance} $_selectedCurrency',
+                            '${viewModel.totalBalanceByDay} $_selectedCurrency',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w900,
