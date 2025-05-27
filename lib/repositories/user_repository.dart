@@ -59,7 +59,11 @@ class UserRepository extends ChangeNotifier {
       throw Exception('Failed to get presigned URL');
     }
 
-    await _userService.uploadToPresignedUrl(presignedURL['url'], imageFile);
+    await _userService.uploadToPresignedUrl(
+      presignedURL['url'],
+      imageFile,
+      filename,
+    );
   }
 
   Future<String> getProfilePhotoUrl(String filename) async {

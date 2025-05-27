@@ -147,7 +147,11 @@ class UserService {
     }
   }
 
-  Future<void> uploadToPresignedUrl(String presignedUrl, File imageFile) async {
+  Future<void> uploadToPresignedUrl(
+    String presignedUrl,
+    File imageFile,
+    String fileName,
+  ) async {
     try {
       // Read the file as bytes
       List<int> imageBytes = await imageFile.readAsBytes();
@@ -164,10 +168,18 @@ class UserService {
 
       if (response.statusCode == 200) {
         print('Image uploaded successfully');
-        // Handle success - maybe update UI or call your backend
+
+        File localFile = await getImageFromLocalStorage(fileName);
+        if (await localFile.exists()) {
+          print('Image exists in local storage, deleting it now');
+          // print the path of the local file
+          print('Local file path: ${localFile.path}');
+          await localFile.delete();
+        } else {
+          print('Image does not exist in local storage');
+        }
       } else {
         print('Upload failed: ${response.statusCode}');
-        // Handle error
       }
     } catch (e) {
       print('Error uploading image: $e');
