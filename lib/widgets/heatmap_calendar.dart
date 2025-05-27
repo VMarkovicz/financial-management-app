@@ -20,6 +20,7 @@ class HeatmapCalendar extends StatelessWidget {
       child: DefaultTextStyle(
         style: const TextStyle(fontSize: 12, color: Colors.black),
         child: HeatMapCalendar(
+          key: ValueKey(datesHeatmap.hashCode), // 👈 Force rebuild on change
           defaultColor: AppTheme.defaultGrey,
           flexible: true,
           showColorTip: false,
@@ -29,21 +30,21 @@ class HeatmapCalendar extends StatelessWidget {
           onMonthChange: (DateTime date) {
             if (onMonthChange != null) {
               onMonthChange!(date);
-              return;
+            } else {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(date.toString())));
             }
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(date.toString())));
           },
           colorsets: {1: AppTheme.success, 2: AppTheme.error},
-          onClick: (value) {
+          onClick: (DateTime value) {
             if (onClick != null) {
               onClick!(value);
-              return;
+            } else {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(value.toString())));
             }
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(value.toString())));
           },
         ),
       ),

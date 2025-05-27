@@ -11,7 +11,8 @@ class TransactionsViewmodel extends ChangeNotifier {
   TransactionsViewmodel(this._transactionsRepository);
 
   List<TransactionModel> transactions = [];
-  Map<DateTime, int> balanceByDay = {};
+  Map<DateTime, double> balanceByDay = {};
+  Map<DateTime, int> datesHeatmap = {};
   double totalMonthlyBalance = 0.0;
   double totalBalanceByDay = 0.0;
   bool busy = false;
@@ -49,16 +50,21 @@ class TransactionsViewmodel extends ChangeNotifier {
       var newTransaction = await _transactionsRepository.addTransaction(
         transaction,
       );
+      debugPrint('datesHeatmap hashCode: ${datesHeatmap.hashCode}');
+      balanceByDay = await _transactionsRepository.getDayBalanceByMonth(newTransaction.date);
+      var newTransactionDailyBalance = balanceByDay[newTransaction.date] ?? 0;
+      datesHeatmap[newTransaction.date] = (newTransactionDailyBalance + newTransaction.amount) > 0 ? 1 : 2;
+
+      var newHeatmap = Map<DateTime, int>.from(datesHeatmap);
+
+      datesHeatmap = newHeatmap;
+      debugPrint('datesHeatmap after hashCode: ${datesHeatmap.hashCode}');
       transactions.add(newTransaction);
       await updateBalance(
-        transaction.type == TransactionType.income
-            ? transaction.amount
-            : -transaction.amount,
+        transaction.amount,
       );
-      totalMonthlyBalance +=
-          transaction.type == TransactionType.income
-              ? transaction.amount
-              : -transaction.amount;
+      totalMonthlyBalance += newTransaction.amount; 
+
     } catch (e) {
       Fluttertoast.showToast(
         msg: "Failed to add transaction: $e",
@@ -155,9 +161,12 @@ class TransactionsViewmodel extends ChangeNotifier {
       notifyListeners();
       return;
     }
-    balanceByDay.addAll(
-      await _transactionsRepository.getDayBalanceByMonth(date),
-    );
+    balanceByDay = await _transactionsRepository.getDayBalanceByMonth(date);
+    
+    for (var entry in balanceByDay.entries) {
+      datesHeatmap[DateTime(entry.key.year, entry.key.month, entry.key.day)] = (entry.value > 0 ? 1 : 2);
+    }
+    
     busyForCalendar = false;
     notifyListeners();
   }

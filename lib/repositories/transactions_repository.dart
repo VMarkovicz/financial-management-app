@@ -51,9 +51,18 @@ class TransactionsRepository {
   }
 
   // This method is used to get the balance by day for a specific month - calendar view
-  Future<Map<DateTime, int>> getDayBalanceByMonth(DateTime date) async {
+  Future<Map<DateTime, double>> getDayBalanceByMonth(DateTime date) async {
     var transactions = _apiService.getDayBalanceByMonth(date);
-    return new Map();
+    Map<DateTime, double> dailyTotals = {};
+    for (var transaction in await transactions) {
+      DateTime transactionDate = DateTime(
+        transaction.date.year,
+        transaction.date.month,
+        transaction.date.day,
+      );
+      dailyTotals[transactionDate] = (dailyTotals[transactionDate] ?? 0.0) + transaction.amount;
+    }
+    return dailyTotals;
   } 
 
   Future<List<ChartData>> getIncomesByWeek(

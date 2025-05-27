@@ -54,6 +54,7 @@ class _CalendarViewState extends State<CalendarView> {
               Consumer<TransactionsViewmodel>(
                 builder: (context, viewModel, child) {
                   return HeatmapCalendar(
+                    key: ValueKey(viewModel.datesHeatmap.hashCode),
                     onClick: (value) {
                       setState(() {
                         _selectedDate = value;
@@ -63,7 +64,7 @@ class _CalendarViewState extends State<CalendarView> {
                     onMonthChange: (monthDate) {
                       viewModel.getDayBalanceByMonth(monthDate);
                     },
-                    datesHeatmap: viewModel.balanceByDay,
+                    datesHeatmap: viewModel.datesHeatmap,
                   );
                 },
               ),
