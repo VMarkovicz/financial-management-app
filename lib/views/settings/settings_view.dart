@@ -89,70 +89,79 @@ class _SettingsViewState extends State<SettingsView> {
       builder:
           (context, userViewModel, child) => Scaffold(
             appBar: CustomAppBar(title: "Settings", showActions: false),
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        ProfileAvatar(
-                          isLoading: userViewModel.busy,
-                          username: userViewModel.user.username,
-                          imageUrl: userViewModel.user.profilePictureUrl ?? '',
-                          onCameraTap:
-                              _isCameraInitialized
-                                  ? () async {
-                                    final photo = await Navigator.of(
-                                      context,
-                                    ).push(
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => CameraCaptureScreen(
-                                              camera: _cameras![0],
-                                            ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            ProfileAvatar(
+                              isLoading: userViewModel.busy,
+                              username: userViewModel.user.username,
+                              imageUrl:
+                                  userViewModel.user.profilePictureUrl ?? '',
+                              onCameraTap:
+                                  _isCameraInitialized
+                                      ? () async {
+                                        final photo = await Navigator.of(
+                                          context,
+                                        ).push(
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    CameraCaptureScreen(
+                                                      camera: _cameras![0],
+                                                    ),
+                                          ),
+                                        );
+                                        if (photo != null && mounted) {
+                                          await userViewModel
+                                              .uploadProfilePhoto(
+                                                File(photo.path),
+                                              );
+                                          userViewModel.getProfilePhotoUrl();
+                                        }
+                                      }
+                                      : () => debugPrint(
+                                        'Camera not initialized or not available',
                                       ),
-                                    );
-                                    if (photo != null && mounted) {
-                                      await userViewModel.uploadProfilePhoto(
-                                        File(photo.path),
-                                      );
-                                      userViewModel.getProfilePhotoUrl();
-                                    }
-                                  }
-                                  : () => debugPrint(
-                                    'Camera not initialized or not available',
-                                  ),
+                            ),
+                            const SizedBox(height: 16),
+                            EditProfile(user: userViewModel.user),
+                            const SizedBox(height: 16),
+                            ChangeCurrency(user: userViewModel.user),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                        EditProfile(user: userViewModel.user),
-                        const SizedBox(height: 16),
-                        const ChangeCurrency(),
-                      ],
+                      ),
                     ),
-                    Column(
-                      children: [
-                        CustomButton(
-                          label: "Logout",
-                          backgroundColor: ButtonType.ghost,
-                          onPressed: () {
-                            _logout();
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        CustomButton(
-                          label: "Delete Account",
-                          backgroundColor: ButtonType.secondary,
-                          onPressed: () {
-                            _deleteAccount(userViewModel.user);
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      CustomButton(
+                        label: "Logout",
+                        backgroundColor: ButtonType.ghost,
+                        onPressed: () {
+                          _logout();
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      CustomButton(
+                        label: "Delete Account",
+                        backgroundColor: ButtonType.secondary,
+                        onPressed: () {
+                          _deleteAccount(userViewModel.user);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
     );

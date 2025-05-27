@@ -14,7 +14,7 @@ class TransactionWidget extends StatelessWidget {
   final DateTime date;
   final String? currency;
   final VoidCallback? onDelete;
-  final Function(TransactionModel)? onEdit; // Changed to TransactionModel
+  final Function(TransactionModel)? onEdit;
 
   const TransactionWidget({
     super.key,
@@ -32,7 +32,9 @@ class TransactionWidget extends StatelessWidget {
   void _handleEdit(BuildContext context) {
     final nameController = TextEditingController(text: name);
     final descriptionController = TextEditingController(text: description);
-    final amountController = TextEditingController(text: amount.toString());
+    final amountController = TextEditingController(
+      text: amount.abs().toString(),
+    );
     TransactionType currentType = type;
 
     Modal.show(
@@ -40,46 +42,48 @@ class TransactionWidget extends StatelessWidget {
       title: 'Edit Transaction',
       body: StatefulBuilder(
         builder: (context, setState) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CustomTextField(
-                label: 'Name',
-                hint: 'Enter name',
-                controller: nameController,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                label: 'Description',
-                hint: 'Enter description',
-                controller: descriptionController,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                label: 'Amount',
-                hint: 'Enter amount',
-                controller: amountController,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<TransactionType>(
-                value: currentType,
-                items: [
-                  DropdownMenuItem(
-                    value: TransactionType.income,
-                    child: Text('Income'),
-                  ),
-                  DropdownMenuItem(
-                    value: TransactionType.expense,
-                    child: Text('Expense'),
-                  ),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() => currentType = value);
-                  }
-                },
-              ),
-            ],
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomTextField(
+                  label: 'Name',
+                  hint: 'Enter name',
+                  controller: nameController,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Description',
+                  hint: 'Enter description',
+                  controller: descriptionController,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  label: 'Amount',
+                  hint: 'Enter amount',
+                  controller: amountController,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<TransactionType>(
+                  value: currentType,
+                  items: [
+                    DropdownMenuItem(
+                      value: TransactionType.income,
+                      child: Text('Income'),
+                    ),
+                    DropdownMenuItem(
+                      value: TransactionType.expense,
+                      child: Text('Expense'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() => currentType = value);
+                    }
+                  },
+                ),
+              ],
+            ),
           );
         },
       ),

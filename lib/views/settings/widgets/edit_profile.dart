@@ -33,7 +33,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   void _updateUser() {
-    if (_userViewModel.user.username.isEmpty) {
+    if (_newUsernameController.value.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
       );

@@ -22,7 +22,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  String _selectedCurrency = 'USD';
+  String? _selectedCurrency;
   late TransactionsViewmodel _transactionsViewmodel;
   late UserViewModel _userViewModel;
   TransactionType _currentType = TransactionType.income;
@@ -40,6 +40,7 @@ class _HomeViewState extends State<HomeView> {
     _userViewModel = context.read<UserViewModel>();
     Future.microtask(() => _transactionsViewmodel.loadTransactions());
     Future.microtask(() => _transactionsViewmodel.getTotalMonthlyBalance());
+    _selectedCurrency = _userViewModel.user.defaultCurrency ?? 'USD';
   }
 
   void _createTransaction() {
@@ -61,9 +62,10 @@ class _HomeViewState extends State<HomeView> {
     final transaction = TransactionCreationModel(
       name: nameController.text,
       description: descriptionController.text,
-      amount: _currentType == TransactionType.income
-          ? double.parse(amountController.text)
-          : -double.parse(amountController.text),
+      amount:
+          _currentType == TransactionType.income
+              ? double.parse(amountController.text)
+              : -double.parse(amountController.text),
       type: _currentType,
       date: DateTime.now(),
     );
@@ -85,7 +87,7 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: "Home",
-        initialCurrency: _selectedCurrency,
+        initialCurrency: _selectedCurrency ?? 'USD',
         showNavigation: false,
         onCurrencyChanged: (currency) {
           setState(() {

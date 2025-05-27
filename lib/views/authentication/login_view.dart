@@ -47,6 +47,7 @@ class _LoginViewState extends State<LoginView> {
         transition: Transition.noTransition,
       );
     } catch (e) {
+      debugPrint("Login error: $e");
       Get.snackbar(
         "Error",
         "Login failed. Please try again.",

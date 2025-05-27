@@ -1,4 +1,5 @@
 import 'package:financial_management_app/viewmodels/transactions_viewmodel.dart';
+import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/widgets/bar_chart.dart';
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
 import 'package:financial_management_app/widgets/custom_navigation_bar.dart';
@@ -14,9 +15,10 @@ class GraphView extends StatefulWidget {
 }
 
 class _GraphViewState extends State<GraphView> {
-  String _selectedCurrency = 'USD';
+  String? _selectedCurrency;
   DateTime _selectedDate = DateTime.now();
   late TransactionsViewmodel _transactionsViewmodel;
+  late UserViewModel _userViewModel;
   List<ChartData> _incomes = [];
   List<ChartData> _expenses = [];
   late DateTime _startOfWeek;
@@ -27,6 +29,8 @@ class _GraphViewState extends State<GraphView> {
   void initState() {
     super.initState();
     _transactionsViewmodel = context.read<TransactionsViewmodel>();
+    _userViewModel = context.read<UserViewModel>();
+    _selectedCurrency = _userViewModel.user.defaultCurrency ?? 'USD';
     _updateWeekRange();
     Future.microtask(() => _fetchData());
   }
@@ -100,7 +104,7 @@ class _GraphViewState extends State<GraphView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: "Graph",
-        initialCurrency: _selectedCurrency,
+        initialCurrency: _selectedCurrency ?? 'USD',
         onCurrencyChanged: (currency) {
           setState(() {
             _selectedCurrency = currency;

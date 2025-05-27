@@ -22,7 +22,9 @@ class TransactionsViewmodel extends ChangeNotifier {
     busy = true;
     notifyListeners();
     try {
-      transactions = await _transactionsRepository.getTransactions();
+      transactions = await _transactionsRepository.getTransactionsByDate(
+        DateTime.now(),
+      );
     } catch (e) {
       Fluttertoast.showToast(
         msg: "Failed to load transactions: $e",
@@ -188,6 +190,16 @@ class TransactionsViewmodel extends ChangeNotifier {
     busy = false;
     notifyListeners();
     return expenses;
+  }
+
+  Future<List<TransactionModel>> getTransactionsByDate(DateTime date) async {
+    busy = true;
+    notifyListeners();
+    List<TransactionModel> transactionsByDay = await _transactionsRepository
+        .getTransactionsByDate(date);
+    busy = false;
+    notifyListeners();
+    return transactionsByDay;
   }
 
   Future<List<ChartData>> getIncomeByWeek(

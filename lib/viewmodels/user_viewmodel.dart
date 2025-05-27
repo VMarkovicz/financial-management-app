@@ -11,7 +11,13 @@ class UserViewModel extends ChangeNotifier {
 
   UserViewModel(this._userRepository);
 
-  UserModel user = UserModel(id: '', username: '', email: '');
+  UserModel user = UserModel(
+    id: '',
+    username: '',
+    email: '',
+    balance: 0.0,
+    defaultCurrency: 'USD',
+  );
   bool busy = false;
 
   Future<void> createUser(UserRegisterModel user) async {
@@ -26,14 +32,19 @@ class UserViewModel extends ChangeNotifier {
     busy = true;
     notifyListeners();
     final response = await _userRepository.loginUser(email, password);
-
-    String filename = '${response.email}_profile_picture.png';
-    var file = await _userRepository.downloadProfilePhoto(filename);
-    user = response;
-    user.profilePictureUrl = file;
-    busy = false;
-    notifyListeners();
-    return response;
+    try {
+      String filename = '${response.email}_profile_picture.png';
+      var file = await _userRepository.downloadProfilePhoto(filename);
+      user = response;
+      user.profilePictureUrl = file;
+    } catch (e) {
+      user = response;
+      user.profilePictureUrl = '';
+    } finally {
+      busy = false;
+      notifyListeners();
+      return response;
+    }
   }
 
   Future<UserModel> updateUser(String username) async {
@@ -52,6 +63,22 @@ class UserViewModel extends ChangeNotifier {
     );
     notifyListeners();
 
+    return response;
+  }
+
+  Future<UserModel> updateDefaultCurrency(String currency) async {
+    final response = await _userRepository.updateDefaultCurrency(currency);
+    user.defaultCurrency = response.defaultCurrency;
+    Fluttertoast.showToast(
+      msg: 'Default currency updated successfully!',
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+    notifyListeners();
     return response;
   }
 

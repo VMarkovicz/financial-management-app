@@ -38,6 +38,53 @@ class ApiService {
     }
   }
 
+  Future<List<TransactionModel>> getTransactionsByDate(DateTime date) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in.');
+    }
+    final userDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
+    if (userDoc == null) {
+      throw Exception('User document not found.');
+    }
+
+    try {
+      var transactionsSnapshot =
+          await userDoc
+              .collection('transactions')
+              .where(
+                'date',
+                isGreaterThanOrEqualTo:
+                    DateTime(date.year, date.month, date.day).toIso8601String(),
+              )
+              .where(
+                'date',
+                isLessThanOrEqualTo:
+                    DateTime(
+                      date.year,
+                      date.month,
+                      date.day,
+                      23,
+                      59,
+                      59,
+                    ).toIso8601String(),
+              )
+              .get();
+
+      if (transactionsSnapshot.docs.isEmpty) {
+        return [];
+      }
+
+      return transactionsSnapshot.docs.map((doc) {
+        return TransactionModel.fromJson({...doc.data(), 'id': doc.id});
+      }).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch transactions: $e');
+    }
+  }
+
   Future<TransactionModel> addTransaction(
     TransactionCreationModel transaction,
   ) async {
@@ -52,7 +99,6 @@ class ApiService {
       throw Exception('User document not found.');
     }
 
-    // if the collection does not exist, create it
     var createdTransaction = await userDoc
         .collection('transactions')
         .add(transaction.toJson());

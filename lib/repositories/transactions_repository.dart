@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:financial_management_app/services/user_service.dart';
 import 'package:financial_management_app/widgets/bar_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -19,6 +20,23 @@ class TransactionsRepository {
     return _apiService.getTransactions();
   }
 
+  Future<List<TransactionModel>> getTransactionsByDate(DateTime date) async {
+    try {
+      return await _apiService.getTransactionsByDate(date);
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Failed to load transactions for the date: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 10,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      return [];
+    }
+  }
+
   Future<TransactionModel> addTransaction(
     TransactionCreationModel transaction,
   ) async {
@@ -32,7 +50,18 @@ class TransactionsRepository {
   Future<TransactionModel> updateTransaction(
     TransactionModel transaction,
   ) async {
-    return await _apiService.updateTransaction(transaction);
+    TransactionModel newTransaction = TransactionModel(
+      id: transaction.id,
+      date: transaction.date,
+      amount:
+          transaction.type == TransactionType.income
+              ? transaction.amount
+              : -transaction.amount,
+      type: transaction.type,
+      description: transaction.description,
+      name: transaction.name,
+    );
+    return await _apiService.updateTransaction(newTransaction);
   }
 
   Future<void> deleteTransaction(String transactionId) async {

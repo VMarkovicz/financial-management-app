@@ -29,6 +29,19 @@ class UserService {
     );
   }
 
+  Future<UserModel> updateDefaultCurrency(String currency) async {
+    final user = _authInstance.currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in.');
+    }
+
+    final userDoc = _firestoreInstance.collection('users').doc(user.uid);
+    await userDoc.update({'defaultCurrency': currency});
+
+    final userData = await userDoc.get();
+    return UserModel.fromJson(userData.data()!);
+  }
+
   Future<void> deleteUser(String id) async {
     final user = _authInstance.currentUser;
     if (user == null || user.uid != id) {

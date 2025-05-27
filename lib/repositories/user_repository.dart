@@ -30,6 +30,11 @@ class UserRepository extends ChangeNotifier {
     return response;
   }
 
+  Future<UserModel> updateDefaultCurrency(String currency) async {
+    final response = await _userService.updateDefaultCurrency(currency);
+    return response;
+  }
+
   Future<double> updateBalance(double value) async {
     return await _userService.updateBalance(value);
   }
@@ -80,6 +85,7 @@ class UserRepository extends ChangeNotifier {
     debugPrint('Downloading file to $filePath');
 
     var presignedURL = await getProfilePhotoUrl(filename);
+
     final response = await _userService.downloadImage(presignedURL, filename);
 
     return response.path;
