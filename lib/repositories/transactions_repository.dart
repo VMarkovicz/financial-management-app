@@ -39,7 +39,6 @@ class TransactionsRepository {
     await _apiService.deleteTransaction(transactionId);
   }
 
-
   //this is used to get the transactions for the home view
   Future<double> getTotalMonthlyBalance(DateTime date) async {
     return await _apiService.getTotalMonthlyBalance(date);
@@ -60,10 +59,11 @@ class TransactionsRepository {
         transaction.date.month,
         transaction.date.day,
       );
-      dailyTotals[transactionDate] = (dailyTotals[transactionDate] ?? 0.0) + transaction.amount;
+      dailyTotals[transactionDate] =
+          (dailyTotals[transactionDate] ?? 0.0) + transaction.amount;
     }
     return dailyTotals;
-  } 
+  }
 
   Future<List<ChartData>> getIncomesByWeek(
     DateTime weekStart,
@@ -75,12 +75,9 @@ class TransactionsRepository {
 
     for (var transaction in transactions) {
       String dayLabel = _getDayLabel(transaction.date.weekday);
-      dailyTotals[dayLabel] = (dailyTotals[dayLabel] ?? 0.0) + transaction.amount;
+      dailyTotals[dayLabel] =
+          (dailyTotals[dayLabel] ?? 0.0) + transaction.amount;
     }
-    debugPrint("Week start: $weekStart, Week end: $weekEnd");
-    dailyTotals.entries.forEach((entry) {
-      debugPrint("Day: ${entry.key}, Amount: ${entry.value}");
-    });
 
     return dailyTotals.entries.map((entry) {
       return ChartData(value: entry.value, label: entry.key);
@@ -97,17 +94,15 @@ class TransactionsRepository {
 
     for (var transaction in transactions) {
       String dayLabel = _getDayLabel(transaction.date.weekday);
-      dailyTotals[dayLabel] = (dailyTotals[dayLabel] ?? 0.0) + transaction.amount.abs();
+      dailyTotals[dayLabel] =
+          (dailyTotals[dayLabel] ?? 0.0) + transaction.amount.abs();
     }
 
     return dailyTotals.entries.map((entry) {
-      return ChartData(
-        value: entry.value,
-        label: entry.key,
-      );
+      return ChartData(value: entry.value, label: entry.key);
     }).toList();
   }
-  
+
   Map<String, double> _defaultDailyTotals() {
     return {
       'Sun': 0.0,
@@ -141,5 +136,3 @@ class TransactionsRepository {
     }
   }
 }
-
-

@@ -50,21 +50,19 @@ class TransactionsViewmodel extends ChangeNotifier {
       var newTransaction = await _transactionsRepository.addTransaction(
         transaction,
       );
-      debugPrint('datesHeatmap hashCode: ${datesHeatmap.hashCode}');
-      balanceByDay = await _transactionsRepository.getDayBalanceByMonth(newTransaction.date);
+      balanceByDay = await _transactionsRepository.getDayBalanceByMonth(
+        newTransaction.date,
+      );
       var newTransactionDailyBalance = balanceByDay[newTransaction.date] ?? 0;
-      datesHeatmap[newTransaction.date] = (newTransactionDailyBalance + newTransaction.amount) > 0 ? 1 : 2;
+      datesHeatmap[newTransaction.date] =
+          (newTransactionDailyBalance + newTransaction.amount) > 0 ? 1 : 2;
 
       var newHeatmap = Map<DateTime, int>.from(datesHeatmap);
 
       datesHeatmap = newHeatmap;
-      debugPrint('datesHeatmap after hashCode: ${datesHeatmap.hashCode}');
       transactions.add(newTransaction);
-      await updateBalance(
-        transaction.amount,
-      );
-      totalMonthlyBalance += newTransaction.amount; 
-
+      await updateBalance(transaction.amount);
+      totalMonthlyBalance += newTransaction.amount;
     } catch (e) {
       Fluttertoast.showToast(
         msg: "Failed to add transaction: $e",
@@ -136,7 +134,9 @@ class TransactionsViewmodel extends ChangeNotifier {
     busy = true;
     notifyListeners();
     DateTime today = DateTime.now();
-    totalMonthlyBalance = await _transactionsRepository.getTotalMonthlyBalance(today);
+    totalMonthlyBalance = await _transactionsRepository.getTotalMonthlyBalance(
+      today,
+    );
     busy = false;
     notifyListeners();
   }
@@ -145,7 +145,9 @@ class TransactionsViewmodel extends ChangeNotifier {
   Future<void> getTotalBalanceByDay(DateTime date) async {
     busy = true;
     notifyListeners();
-    totalBalanceByDay = await _transactionsRepository.getTotalBalanceByDay(date);
+    totalBalanceByDay = await _transactionsRepository.getTotalBalanceByDay(
+      date,
+    );
     busy = false;
     notifyListeners();
   }
@@ -162,11 +164,12 @@ class TransactionsViewmodel extends ChangeNotifier {
       return;
     }
     balanceByDay = await _transactionsRepository.getDayBalanceByMonth(date);
-    
+
     for (var entry in balanceByDay.entries) {
-      datesHeatmap[DateTime(entry.key.year, entry.key.month, entry.key.day)] = (entry.value > 0 ? 1 : 2);
+      datesHeatmap[DateTime(entry.key.year, entry.key.month, entry.key.day)] =
+          (entry.value > 0 ? 1 : 2);
     }
-    
+
     busyForCalendar = false;
     notifyListeners();
   }

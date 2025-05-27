@@ -20,7 +20,6 @@ class HeatmapCalendar extends StatelessWidget {
       child: DefaultTextStyle(
         style: const TextStyle(fontSize: 12, color: Colors.black),
         child: HeatMapCalendar(
-          key: ValueKey(datesHeatmap.hashCode), // 👈 Force rebuild on change
           defaultColor: AppTheme.defaultGrey,
           flexible: true,
           showColorTip: false,

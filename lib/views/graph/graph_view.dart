@@ -33,11 +33,14 @@ class _GraphViewState extends State<GraphView> {
 
   void _updateWeekRange() {
     _startOfWeek = _selectedDate.subtract(
-      Duration(days: _selectedDate.weekday),
+      Duration(
+        days: _selectedDate.weekday,
+        hours: _selectedDate.hour,
+        minutes: _selectedDate.minute,
+        seconds: _selectedDate.second,
+        milliseconds: _selectedDate.millisecond,
+      ),
     );
-    // 
-    debugPrint("Start of week: $_startOfWeek.weekday");
-    debugPrint(_startOfWeek.weekday.toString());
     _endOfWeek = _startOfWeek.add(const Duration(days: 6));
   }
 

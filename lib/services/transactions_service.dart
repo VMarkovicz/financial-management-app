@@ -80,7 +80,6 @@ class ApiService {
     if (userDoc == null) {
       throw Exception('User document not found.');
     }
-    debugPrint('Updating transaction: ${transaction.id}');
     await userDoc
         .collection('transactions')
         .doc(transaction.id)
@@ -110,9 +109,7 @@ class ApiService {
     await userDoc.collection('transactions').doc(transactionId).delete();
   }
 
-    Future<double> getTotalMonthlyBalance(
-    DateTime currentDate,
-  ) async {
+  Future<double> getTotalMonthlyBalance(DateTime currentDate) async {
     final user = _auth.currentUser;
     if (user == null) {
       throw Exception('No user is currently signed in.');
@@ -126,11 +123,27 @@ class ApiService {
     try {
       var transactionsSnapshot =
           await userDoc
-            .collection('transactions')
-            .where('date', isGreaterThanOrEqualTo: DateTime(currentDate.year, currentDate.month, 1).toIso8601String())
-            .where('date', isLessThanOrEqualTo: DateTime(currentDate.year, currentDate.month + 1, 0).toIso8601String())
-            .aggregate(sum('amount'))
-            .get();
+              .collection('transactions')
+              .where(
+                'date',
+                isGreaterThanOrEqualTo:
+                    DateTime(
+                      currentDate.year,
+                      currentDate.month,
+                      1,
+                    ).toIso8601String(),
+              )
+              .where(
+                'date',
+                isLessThanOrEqualTo:
+                    DateTime(
+                      currentDate.year,
+                      currentDate.month + 1,
+                      0,
+                    ).toIso8601String(),
+              )
+              .aggregate(sum('amount'))
+              .get();
 
       return transactionsSnapshot.getSum('amount') ?? 0.0;
     } catch (e) {
@@ -138,9 +151,7 @@ class ApiService {
     }
   }
 
-  Future<double> getTotalBalanceByDay(
-    DateTime currentDate,
-  ) async {
+  Future<double> getTotalBalanceByDay(DateTime currentDate) async {
     final user = _auth.currentUser;
     if (user == null) {
       throw Exception('No user is currently signed in.');
@@ -153,10 +164,29 @@ class ApiService {
     }
     try {
       var transactionsSnapshot =
-            await userDoc
+          await userDoc
               .collection('transactions')
-              .where('date', isGreaterThanOrEqualTo: DateTime(currentDate.year, currentDate.month, currentDate.day).toIso8601String())
-              .where('date', isLessThanOrEqualTo: DateTime(currentDate.year, currentDate.month, currentDate.day, 23, 59, 59).toIso8601String())
+              .where(
+                'date',
+                isGreaterThanOrEqualTo:
+                    DateTime(
+                      currentDate.year,
+                      currentDate.month,
+                      currentDate.day,
+                    ).toIso8601String(),
+              )
+              .where(
+                'date',
+                isLessThanOrEqualTo:
+                    DateTime(
+                      currentDate.year,
+                      currentDate.month,
+                      currentDate.day,
+                      23,
+                      59,
+                      59,
+                    ).toIso8601String(),
+              )
               .aggregate(sum('amount'))
               .get();
 
@@ -181,10 +211,26 @@ class ApiService {
     }
     try {
       var transactionsSnapshot =
-            await userDoc
+          await userDoc
               .collection('transactions')
-              .where('date', isGreaterThanOrEqualTo: DateTime(currentDate.year, currentDate.month, 1).toIso8601String())
-              .where('date', isLessThanOrEqualTo: DateTime(currentDate.year, currentDate.month + 1, 0).toIso8601String())
+              .where(
+                'date',
+                isGreaterThanOrEqualTo:
+                    DateTime(
+                      currentDate.year,
+                      currentDate.month,
+                      1,
+                    ).toIso8601String(),
+              )
+              .where(
+                'date',
+                isLessThanOrEqualTo:
+                    DateTime(
+                      currentDate.year,
+                      currentDate.month + 1,
+                      0,
+                    ).toIso8601String(),
+              )
               .get();
 
       if (transactionsSnapshot.docs.isEmpty) {
@@ -217,22 +263,14 @@ class ApiService {
       var transactionsSnapshot =
           await userDoc
               .collection('transactions')
-              .where('date', isGreaterThanOrEqualTo: weekStart.toIso8601String())
+              .where(
+                'date',
+                isGreaterThanOrEqualTo: weekStart.toIso8601String(),
+              )
               .where('date', isLessThanOrEqualTo: weekEnd.toIso8601String())
               .where('type', isEqualTo: "expense")
               .get();
 
-      var transactions =
-          transactionsSnapshot.docs.map((doc) {
-            return TransactionModel.fromJson({...doc.data(), 'id': doc.id});
-          }).toList();
-
-      debugPrint('Found ${transactions.length} expense transactions:');
-      for (var transaction in transactions) {
-        debugPrint(
-          '  - ${transaction.name}: ${transaction.amount} on ${transaction.date}',
-        );
-      }
       if (transactionsSnapshot.docs.isEmpty) {
         return [];
       }
@@ -263,22 +301,14 @@ class ApiService {
       var transactionsSnapshot =
           await userDoc
               .collection('transactions')
-              .where('date', isGreaterThanOrEqualTo: weekStart.toIso8601String())
+              .where(
+                'date',
+                isGreaterThanOrEqualTo: weekStart.toIso8601String(),
+              )
               .where('date', isLessThanOrEqualTo: weekEnd.toIso8601String())
               .where('type', isEqualTo: "income")
               .get();
 
-      var transactions =
-          transactionsSnapshot.docs.map((doc) {
-            return TransactionModel.fromJson({...doc.data(), 'id': doc.id});
-          }).toList();
-
-      debugPrint('Found ${transactions.length} income transactions:');
-      for (var transaction in transactions) {
-        debugPrint(
-          '  - ${transaction.name}: ${transaction.amount} on ${transaction.date}',
-        );
-      }
       if (transactionsSnapshot.docs.isEmpty) {
         return [];
       }

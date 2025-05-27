@@ -23,20 +23,18 @@ class _LoginViewState extends State<LoginView> {
 
   void _login() async {
     final userViewModel = context.read<UserViewModel>();
-    // if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-    //   Get.snackbar(
-    //     "Error",
-    //     "Please fill in all fields",
-    //     snackPosition: SnackPosition.BOTTOM,
-    //   );
-    //   return;
-    // }
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please fill in all fields",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
     try {
       var user = await userViewModel.loginUser(
-        // _emailController.text,
-        // _passwordController.text,
-        "markovicz@gmail.com",
-        "markovicz",
+        _emailController.text,
+        _passwordController.text,
       );
       Fluttertoast.showToast(
         msg: "Welcome back, ${user.username}!",
