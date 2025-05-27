@@ -33,8 +33,6 @@ class AuthService {
           id: userAuth.uid,
           username: user.username,
           email: user.email,
-          profilePictureUrl:
-              'https://lh3.googleusercontent.com/a/ACg8ocKeLXC14lQIGbe_CUjnow263I-OBDTxLOkI0KX_hvnd0aToKm_V=s288-c-no',
         );
         await _usersCollection.doc(userAuth.uid).set(userModel.toJson());
       } else {

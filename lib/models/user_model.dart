@@ -18,19 +18,12 @@ class UserModel {
       id: json['id'] as String,
       username: json['username'] as String,
       email: json['email'] as String,
-      profilePictureUrl: json['profilePictureUrl'] as String?,
       balance: (json['balance'] as num?)?.toDouble(),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'username': username,
-      'email': email,
-      'profilePictureUrl': profilePictureUrl,
-      'balance': balance,
-    };
+    return {'id': id, 'username': username, 'email': email, 'balance': balance};
   }
 }
 

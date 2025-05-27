@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:financial_management_app/models/user_model.dart';
 import 'package:financial_management_app/viewmodels/user_viewmodel.dart';
 import 'package:financial_management_app/views/authentication/login_view.dart';
@@ -9,6 +10,8 @@ import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
+import 'package:financial_management_app/views/settings/widgets/camera_capture_screen.dart';
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
@@ -19,12 +22,47 @@ class SettingsView extends StatefulWidget {
 
 class _SettingsViewState extends State<SettingsView> {
   late UserViewModel _userViewModel;
-  late final UserModel _user;
+  CameraController? controller;
+  List<CameraDescription>? _cameras;
+  bool _isCameraInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _userViewModel = context.read<UserViewModel>();
+    _initializeCamera();
+  }
+
+  Future<void> _initializeCamera() async {
+    try {
+      _cameras = await availableCameras();
+      if (_cameras != null && _cameras!.isNotEmpty) {
+        controller = CameraController(_cameras![0], ResolutionPreset.max);
+        await controller!.initialize();
+        if (mounted) {
+          setState(() {
+            _isCameraInitialized = true;
+          });
+        }
+      }
+    } catch (e) {
+      if (e is CameraException) {
+        switch (e.code) {
+          case 'CameraAccessDenied':
+            // Handle access errors here.
+            break;
+          default:
+            // Handle other errors here.
+            break;
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
   }
 
   void _logout() async {
@@ -60,9 +98,32 @@ class _SettingsViewState extends State<SettingsView> {
                     Column(
                       children: [
                         ProfileAvatar(
-                          // use the userViewModel to get the user data
+                          isLoading: userViewModel.busy,
                           username: userViewModel.user.username,
                           imageUrl: userViewModel.user.profilePictureUrl ?? '',
+                          onCameraTap:
+                              _isCameraInitialized
+                                  ? () async {
+                                    final photo = await Navigator.of(
+                                      context,
+                                    ).push(
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => CameraCaptureScreen(
+                                              camera: _cameras![0],
+                                            ),
+                                      ),
+                                    );
+                                    if (photo != null && mounted) {
+                                      await userViewModel.uploadProfilePhoto(
+                                        File(photo.path),
+                                      );
+                                      userViewModel.getProfilePhotoUrl();
+                                    }
+                                  }
+                                  : () => debugPrint(
+                                    'Camera not initialized or not available',
+                                  ),
                         ),
                         const SizedBox(height: 16),
                         EditProfile(user: userViewModel.user),
