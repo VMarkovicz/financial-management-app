@@ -65,33 +65,4 @@ class UserRepository extends ChangeNotifier {
       filename,
     );
   }
-
-  Future<String> getProfilePhotoUrl(String filename) async {
-    var presignedURLJson = await _userService.getPresignedUrlGetObject(
-      filename,
-    );
-    var presignedURL = Map<String, dynamic>.from(jsonDecode(presignedURLJson));
-    if (presignedURL.isEmpty || !presignedURL.containsKey('url')) {
-      throw Exception('Failed to get presigned URL');
-    }
-    return presignedURL['url'];
-  }
-
-  Future<String> downloadProfilePhoto(String filename) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/$filename';
-    File file = File(filePath);
-    if (await file.exists()) {
-      debugPrint('File already exists at $filePath');
-      return file.path;
-    }
-
-    debugPrint('Downloading file to $filePath');
-
-    var presignedURL = await getProfilePhotoUrl(filename);
-
-    final response = await _userService.downloadImage(presignedURL, filename);
-
-    return response.path;
-  }
 }

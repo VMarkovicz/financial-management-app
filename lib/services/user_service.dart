@@ -95,58 +95,6 @@ class UserService {
     }
   }
 
-  Future<String> getPresignedUrlGetObject(String filename) async {
-    final user = _authInstance.currentUser;
-    if (user == null) {
-      throw Exception('No user is currently signed in.');
-    }
-
-    if (dotenv.env['GET_AWS_LAMBDA_URL'] == null) {
-      throw Exception('GET_AWS_LAMBDA_URL is not set in .env file');
-    }
-
-    var response = await http.post(
-      Uri.parse(dotenv.env['GET_AWS_LAMBDA_URL']!),
-      headers: {'Content-Type': 'application/json'},
-      body: '{"filename": "$filename"}',
-    );
-
-    if (response.statusCode == 200) {
-      return response.body;
-    } else {
-      throw Exception('Failed to get presigned URL: ${response.statusCode}');
-    }
-  }
-
-  Future<File> downloadImage(String presignedUrl, String filename) async {
-    try {
-      var response = await http.get(Uri.parse(presignedUrl));
-
-      if (response.statusCode == 200) {
-        Directory dir = await getApplicationDocumentsDirectory();
-        File imageFile = File('${dir.path}/$filename');
-        await imageFile.writeAsBytes(response.bodyBytes);
-
-        return imageFile;
-      } else {
-        throw Exception('Failed to download image: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  Future<File> getImageFromLocalStorage(String filename) async {
-    Directory dir = await getApplicationDocumentsDirectory();
-    File imageFile = File('${dir.path}/$filename');
-
-    if (await imageFile.exists()) {
-      return imageFile;
-    } else {
-      throw Exception('Image file does not exist at ${imageFile.path}');
-    }
-  }
-
   Future<void> uploadToPresignedUrl(
     String presignedUrl,
     File imageFile,
@@ -165,22 +113,6 @@ class UserService {
               'image/jpeg', // or 'image/png' depending on your image format
         },
       );
-
-      if (response.statusCode == 200) {
-        print('Image uploaded successfully');
-
-        File localFile = await getImageFromLocalStorage(fileName);
-        if (await localFile.exists()) {
-          print('Image exists in local storage, deleting it now');
-          // print the path of the local file
-          print('Local file path: ${localFile.path}');
-          await localFile.delete();
-        } else {
-          print('Image does not exist in local storage');
-        }
-      } else {
-        print('Upload failed: ${response.statusCode}');
-      }
     } catch (e) {
       print('Error uploading image: $e');
       // Handle error

@@ -8,6 +8,7 @@ import 'package:financial_management_app/views/settings/widgets/profile_avatar.d
 import 'package:financial_management_app/widgets/custom_app_bar.dart';
 import 'package:financial_management_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
@@ -102,7 +103,7 @@ class _SettingsViewState extends State<SettingsView> {
                               isLoading: userViewModel.busy,
                               username: userViewModel.user.username,
                               imageUrl:
-                                  userViewModel.user.profilePictureUrl ?? '',
+                                  '${dotenv.env['CDN_URL']}/${userViewModel.user.email}_profile_picture.png',
                               onCameraTap:
                                   _isCameraInitialized
                                       ? () async {
@@ -122,7 +123,6 @@ class _SettingsViewState extends State<SettingsView> {
                                               .uploadProfilePhoto(
                                                 File(photo.path),
                                               );
-                                          userViewModel.getProfilePhotoUrl();
                                         }
                                       }
                                       : () => debugPrint(

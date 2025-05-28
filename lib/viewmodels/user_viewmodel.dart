@@ -32,19 +32,11 @@ class UserViewModel extends ChangeNotifier {
     busy = true;
     notifyListeners();
     final response = await _userRepository.loginUser(email, password);
-    try {
-      String filename = '${response.email}_profile_picture.png';
-      var file = await _userRepository.downloadProfilePhoto(filename);
-      user = response;
-      user.profilePictureUrl = file;
-    } catch (e) {
-      user = response;
-      user.profilePictureUrl = '';
-    } finally {
-      busy = false;
-      notifyListeners();
-      return response;
-    }
+    user = response;
+    user.profilePictureUrl = '';
+    busy = false;
+    notifyListeners();
+    return user;
   }
 
   Future<UserModel> updateUser(String username) async {
@@ -135,37 +127,6 @@ class UserViewModel extends ChangeNotifier {
       textColor: Colors.white,
       fontSize: 16.0,
     );
-    busy = false;
-    notifyListeners();
-  }
-
-  Future<void> getProfilePhotoUrl() async {
-    String filename = '${user.email}_profile_picture.png';
-    busy = true;
-    notifyListeners();
-    var file = await _userRepository.downloadProfilePhoto(filename);
-    if (file.isNotEmpty) {
-      user.profilePictureUrl = file;
-      Fluttertoast.showToast(
-        msg: 'Profile photo retrieved successfully!',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } else {
-      Fluttertoast.showToast(
-        msg: 'Failed to retrieve profile photo.',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
     busy = false;
     notifyListeners();
   }

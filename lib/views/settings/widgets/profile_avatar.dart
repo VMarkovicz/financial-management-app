@@ -32,18 +32,35 @@ class ProfileAvatar extends StatelessWidget {
                 CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.grey.shade200,
-                  backgroundImage:
-                      isLoading
-                          ? null
-                          : imageUrl.isNotEmpty
-                          ? FileImage(File(imageUrl)) as ImageProvider
-                          : null,
                   child:
                       isLoading
                           ? CircularProgressIndicator()
                           : imageUrl.isEmpty
                           ? Icon(Icons.person, size: 60, color: Colors.grey)
-                          : null,
+                          : ClipOval(
+                            child: Image.network(
+                              imageUrl,
+                              width: 120,
+                              height: 120,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (
+                                context,
+                                child,
+                                loadingProgress,
+                              ) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                              errorBuilder:
+                                  (context, error, stackTrace) => Icon(
+                                    Icons.person,
+                                    size: 60,
+                                    color: Colors.grey,
+                                  ),
+                            ),
+                          ),
                 ),
                 Positioned(
                   bottom: 0,
