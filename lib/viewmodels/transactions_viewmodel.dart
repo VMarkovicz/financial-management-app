@@ -55,8 +55,13 @@ class TransactionsViewmodel extends ChangeNotifier {
       balanceByDay = await _transactionsRepository.getDayBalanceByMonth(
         newTransaction.date,
       );
-      var newTransactionDailyBalance = balanceByDay[newTransaction.date] ?? 0;
-      datesHeatmap[newTransaction.date] =
+      var newTransactionDate = DateTime(
+        newTransaction.date.year,
+        newTransaction.date.month,
+        newTransaction.date.day,
+      );
+      var newTransactionDailyBalance = balanceByDay[newTransactionDate] ?? 0;
+      datesHeatmap[newTransactionDate] =
           (newTransactionDailyBalance + newTransaction.amount) > 0 ? 1 : 2;
 
       var newHeatmap = Map<DateTime, int>.from(datesHeatmap);

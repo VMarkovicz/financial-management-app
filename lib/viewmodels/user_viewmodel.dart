@@ -17,6 +17,7 @@ class UserViewModel extends ChangeNotifier {
     email: '',
     balance: 0.0,
     defaultCurrency: 'USD',
+    profilePictureUrl: '',
   );
   bool busy = false;
 
@@ -33,7 +34,6 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
     final response = await _userRepository.loginUser(email, password);
     user = response;
-    user.profilePictureUrl = '';
     busy = false;
     notifyListeners();
     return user;
@@ -84,7 +84,7 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteUser(String id) async {
-    await _userRepository.deleteUser(id);
+    await _userRepository.deleteUser(id, user);
     Fluttertoast.showToast(
       msg: 'User deleted successfully!',
       toastLength: Toast.LENGTH_LONG,
@@ -117,7 +117,16 @@ class UserViewModel extends ChangeNotifier {
     busy = true;
     notifyListeners();
     String filename = '${user.email}_profile_picture.png';
-    await _userRepository.uploadProfilePhoto(filename, imageFile);
+    String oldProfilePictureUrl = '';
+    if (user.profilePictureUrl!.isNotEmpty) {
+      oldProfilePictureUrl = user.profilePictureUrl!;
+    }
+    String filePath = await _userRepository.uploadProfilePhoto(
+      filename,
+      imageFile,
+      oldProfilePictureUrl,
+    );
+    user.profilePictureUrl = filePath;
     Fluttertoast.showToast(
       msg: 'Profile photo updated successfully!',
       toastLength: Toast.LENGTH_LONG,

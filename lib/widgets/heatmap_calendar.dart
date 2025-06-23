@@ -23,6 +23,7 @@ class HeatmapCalendar extends StatelessWidget {
           defaultColor: AppTheme.defaultGrey,
           flexible: true,
           showColorTip: false,
+          initDate: DateTime.now(),
           colorMode: ColorMode.color,
           textColor: Colors.white,
           datasets: datesHeatmap,

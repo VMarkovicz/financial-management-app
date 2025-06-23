@@ -43,26 +43,41 @@ class UserRepository extends ChangeNotifier {
     await _authService.logoutUser();
   }
 
-  Future<void> deleteUser(String id) async {
+  Future<void> deleteUser(String id, UserModel user) async {
+    if (user.id != id) {
+      throw Exception('User ID does not match the authenticated user.');
+    }
+    if (user.profilePictureUrl != null && user.profilePictureUrl!.isNotEmpty) {
+      await _userService.deleteProfilePictureS3(user.profilePictureUrl!);
+    }
     await _userService.deleteUser(id);
   }
 
-  Future<void> uploadProfilePhoto(String filename, File imageFile) async {
-    final presignedURLJson = await _userService.getPresignedUrlPutObject(
-      filename,
-    );
+  Future<String> uploadProfilePhoto(
+    String filename,
+    File imageFile,
+    String? oldProfilePictureUrl,
+  ) async {
+    final response = await _userService.getPresignedUrlPutObject(filename);
 
-    final presignedURL = Map<String, dynamic>.from(
-      jsonDecode(presignedURLJson),
-    );
-    if (presignedURL.isEmpty || !presignedURL.containsKey('url')) {
+    if (response.isEmpty || !response.containsKey('url')) {
       throw Exception('Failed to get presigned URL');
     }
+    debugPrint('Presigned URL: ${response['url']}');
 
-    await _userService.uploadToPresignedUrl(
-      presignedURL['url'],
-      imageFile,
-      filename,
-    );
+    try {
+      await _userService.uploadToPresignedUrl(response['url']!, imageFile);
+
+      await _userService.updateProfilePicture(response['profilePictureUrl']!);
+
+      if (oldProfilePictureUrl != null && oldProfilePictureUrl.isNotEmpty) {
+        debugPrint('Deleting old profile picture: $oldProfilePictureUrl');
+        await _userService.deleteProfilePictureS3(oldProfilePictureUrl);
+      }
+
+      return response['profilePictureUrl']!;
+    } catch (e) {
+      throw Exception('Failed to upload image: $e');
+    }
   }
 }

@@ -22,6 +22,7 @@ class UserModel {
       email: json['email'] as String,
       balance: (json['balance'] as num?)?.toDouble(),
       defaultCurrency: json['defaultCurrency'] as String?,
+      profilePictureUrl: json['profilePictureUrl'] as String?,
     );
   }
 
@@ -32,6 +33,7 @@ class UserModel {
       'email': email,
       'balance': balance,
       'defaultCurrency': defaultCurrency,
+      'profilePictureUrl': profilePictureUrl,
     };
   }
 }

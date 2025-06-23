@@ -26,13 +26,7 @@ class _SettingsViewState extends State<SettingsView> {
   CameraController? controller;
   List<CameraDescription>? _cameras;
   bool _isCameraInitialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _userViewModel = context.read<UserViewModel>();
-    _initializeCamera();
-  }
+  late String _profilePicUrl;
 
   Future<void> _initializeCamera() async {
     try {
@@ -58,6 +52,14 @@ class _SettingsViewState extends State<SettingsView> {
         }
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _userViewModel = context.read<UserViewModel>();
+    _profilePicUrl =
+        '${dotenv.env['CDN_URL']}/${_userViewModel.user.profilePictureUrl}';
   }
 
   @override
@@ -102,32 +104,43 @@ class _SettingsViewState extends State<SettingsView> {
                             ProfileAvatar(
                               isLoading: userViewModel.busy,
                               username: userViewModel.user.username,
-                              imageUrl:
-                                  '${dotenv.env['CDN_URL']}/${userViewModel.user.email}_profile_picture.png',
-                              onCameraTap:
-                                  _isCameraInitialized
-                                      ? () async {
-                                        final photo = await Navigator.of(
-                                          context,
-                                        ).push(
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) =>
-                                                    CameraCaptureScreen(
-                                                      camera: _cameras![0],
-                                                    ),
+                              imageUrl: _profilePicUrl,
+                              onCameraTap: () async {
+                                await _initializeCamera();
+                                if (_cameras != null &&
+                                    _cameras!.isNotEmpty &&
+                                    controller != null &&
+                                    controller!.value.isInitialized) {
+                                  final photo = await Navigator.of(
+                                    context,
+                                  ).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => CameraCaptureScreen(
+                                            camera: _cameras![0],
                                           ),
-                                        );
-                                        if (photo != null && mounted) {
-                                          await userViewModel
-                                              .uploadProfilePhoto(
-                                                File(photo.path),
-                                              );
-                                        }
-                                      }
-                                      : () => debugPrint(
-                                        'Camera not initialized or not available',
-                                      ),
+                                    ),
+                                  );
+                                  controller?.dispose();
+                                  controller = null;
+                                  setState(() {
+                                    _isCameraInitialized = false;
+                                  });
+                                  if (photo != null && mounted) {
+                                    await userViewModel.uploadProfilePhoto(
+                                      File(photo.path),
+                                    );
+                                    setState(() {
+                                      _profilePicUrl =
+                                          '${dotenv.env['CDN_URL']}/${_userViewModel.user.profilePictureUrl}';
+                                    });
+                                  }
+                                } else {
+                                  debugPrint(
+                                    'Camera not initialized or not available',
+                                  );
+                                }
+                              },
                             ),
                             const SizedBox(height: 16),
                             EditProfile(user: userViewModel.user),

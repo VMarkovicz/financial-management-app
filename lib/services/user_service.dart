@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:financial_management_app/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
@@ -72,7 +74,23 @@ class UserService {
     return newBalance;
   }
 
-  Future<String> getPresignedUrlPutObject(String filename) async {
+  Future<String> updateProfilePicture(String filename) async {
+    final user = _authInstance.currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in.');
+    }
+
+    try {
+      final userDoc = _firestoreInstance.collection('users').doc(user.uid);
+      await userDoc.update({'profilePictureUrl': filename});
+    } catch (e) {
+      throw Exception('Failed to update profile picture: $e');
+    }
+
+    return filename;
+  }
+
+  Future<Map<String, String>> getPresignedUrlPutObject(String filename) async {
     final user = _authInstance.currentUser;
     if (user == null) {
       throw Exception('No user is currently signed in.');
@@ -89,22 +107,43 @@ class UserService {
     );
 
     if (response.statusCode == 200) {
-      return response.body;
+      final data = response.body;
+      final jsonData = Map<String, dynamic>.from(jsonDecode(data));
+      return {
+        'url': jsonData['url'],
+        'profilePictureUrl': jsonData['file_name'],
+      };
     } else {
       throw Exception('Failed to get presigned URL: ${response.statusCode}');
     }
   }
 
-  Future<void> uploadToPresignedUrl(
-    String presignedUrl,
-    File imageFile,
-    String fileName,
-  ) async {
+  Future<void> deleteProfilePictureS3(String fileName) async {
+    if (dotenv.env['DELETE_AWS_LAMBDA_URL'] == null) {
+      throw Exception('Environment variable DELETE_AWS_LAMBDA_URL is not set.');
+    }
+
+    var response = await http.post(
+      Uri.parse(dotenv.env['DELETE_AWS_LAMBDA_URL']!),
+      headers: {'Content-Type': 'application/json'},
+      body: '{"old_key": "$fileName"}',
+    );
+
+    if (response.statusCode != 204) {
+      throw Exception(
+        'Failed to delete profile picture: ${response.statusCode}',
+      );
+    }
+
+    debugPrint('Profile picture deleted successfully: $fileName');
+  }
+
+  Future<void> uploadToPresignedUrl(String presignedUrl, File imageFile) async {
     try {
       // Read the file as bytes
       List<int> imageBytes = await imageFile.readAsBytes();
 
-      // Make PUT request with binary data
+      debugPrint('Uploading image to presigned URL: $presignedUrl');
       var response = await http.put(
         Uri.parse(presignedUrl),
         body: imageBytes,

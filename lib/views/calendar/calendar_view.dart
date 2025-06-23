@@ -24,6 +24,7 @@ class _CalendarViewState extends State<CalendarView> {
   late TransactionsViewmodel _transactionsViewmodel;
   late UserViewModel _userViewModel;
   List<TransactionModel> _transactionsByDate = [];
+  Map<DateTime, int> _datesHeatmap = {};
 
   @override
   void initState() {
@@ -31,16 +32,23 @@ class _CalendarViewState extends State<CalendarView> {
     _transactionsViewmodel = context.read<TransactionsViewmodel>();
     _userViewModel = context.read<UserViewModel>();
     _selectedCurrency = _userViewModel.user.defaultCurrency ?? 'USD';
-    Future.microtask(
-      () => _transactionsViewmodel.getTotalBalanceByDay(_selectedDate),
-    );
-    Future.microtask(
-      () => _transactionsViewmodel.getDayBalanceByMonth(_selectedDate),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadData();
+    });
+  }
+
+  void loadData() async {
+    await _transactionsViewmodel.getTotalBalanceByDay(_selectedDate);
+    await _transactionsViewmodel.getDayBalanceByMonth(_selectedDate);
+    if (mounted) {
+      setState(() {});
+    }
+    _datesHeatmap = _transactionsViewmodel.datesHeatmap;
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<TransactionsViewmodel>();
     return Scaffold(
       appBar: CustomAppBar(
         title: "Calendar",
@@ -56,111 +64,129 @@ class _CalendarViewState extends State<CalendarView> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(32.0),
-            child: Consumer<TransactionsViewmodel>(
-              builder: (context, viewModel, child) {
-                return Column(
-                  children: [
-                    HeatmapCalendar(
-                      key: ValueKey(viewModel.datesHeatmap.hashCode),
-                      onClick: (value) {
-                        setState(() {
-                          _selectedDate = value;
-                          _transactionsByDate = [];
-                        });
-                        viewModel.getTotalBalanceByDay(_selectedDate);
-                      },
-                      onMonthChange: (monthDate) {
-                        viewModel.getDayBalanceByMonth(monthDate);
-                      },
-                      datesHeatmap: viewModel.datesHeatmap,
-                    ),
-                    const SizedBox(height: 32),
-                    PaperContainer(
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 46.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              '${DateFormat.yMMMMd().format(_selectedDate)} Balance:',
+            child: Column(
+              children: [
+                HeatmapCalendar(
+                  key: ValueKey(viewModel.datesHeatmap.hashCode),
+                  onClick: (value) {
+                    setState(() {
+                      _selectedDate = value;
+                      _transactionsByDate = [];
+                    });
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      viewModel.getTotalBalanceByDay(_selectedDate);
+                    });
+                  },
+
+                  onMonthChange: (monthDate) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      viewModel.getDayBalanceByMonth(monthDate);
+                    });
+                  },
+                  datesHeatmap: _datesHeatmap,
+                ),
+                const SizedBox(height: 32),
+                PaperContainer(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 46.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          '${DateFormat.yMMMMd().format(_selectedDate)} Balance:',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w100,
+                          ),
+                        ),
+                        viewModel.busy
+                            ? const CircularProgressIndicator()
+                            : Text(
+                              '${viewModel.totalBalanceByDay} $_selectedCurrency',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w100,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w900,
                               ),
                             ),
-                            viewModel.busy
-                                ? const CircularProgressIndicator()
-                                : Text(
-                                  '${viewModel.totalBalanceByDay} $_selectedCurrency',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ),
-                    const SizedBox(height: 32),
-                    CustomButton(
-                      label: 'See Transactions',
-                      onPressed: () async {
-                        List<TransactionModel> transactions = await viewModel
-                            .getTransactionsByDate(_selectedDate);
+                  ),
+                ),
+                const SizedBox(height: 32),
+                CustomButton(
+                  label: 'See Transactions',
+                  onPressed: () async {
+                    // Use post frame callback to ensure this doesn't happen during build
+                    WidgetsBinding.instance.addPostFrameCallback((_) async {
+                      List<TransactionModel> transactions = await viewModel
+                          .getTransactionsByDate(_selectedDate);
+                      if (mounted) {
                         setState(() {
                           _transactionsByDate = transactions;
                         });
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        spacing: 16,
-                        children:
-                            _transactionsByDate
-                                .map(
-                                  (transaction) => TransactionWidget(
-                                    id: transaction.id,
-                                    name: transaction.name,
-                                    description: transaction.description,
-                                    amount: transaction.amount,
-                                    type: transaction.type,
-                                    date: transaction.date,
-                                    onDelete: () async {
-                                      await viewModel.deleteTransaction(
-                                        transaction.id,
-                                        (amount) =>
-                                            viewModel.getTotalBalanceByDay(
-                                              _selectedDate,
-                                            ),
-                                      );
-                                      final transactions = await viewModel
-                                          .getTransactionsByDate(_selectedDate);
+                      }
+                    });
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    spacing: 16,
+                    children:
+                        _transactionsByDate
+                            .map(
+                              (transaction) => TransactionWidget(
+                                id: transaction.id,
+                                name: transaction.name,
+                                description: transaction.description,
+                                amount: transaction.amount,
+                                type: transaction.type,
+                                date: transaction.date,
+                                onDelete: () async {
+                                  // Use post frame callback to avoid setState during build
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) async {
+                                    await viewModel.deleteTransaction(
+                                      transaction.id,
+                                      (amount) => viewModel
+                                          .getTotalBalanceByDay(_selectedDate),
+                                    );
+                                    final transactions = await viewModel
+                                        .getTransactionsByDate(_selectedDate);
+                                    if (mounted) {
                                       setState(() {
                                         _transactionsByDate = transactions;
                                       });
-                                    },
-                                    onEdit: (editedTransaction) async {
-                                      await viewModel.updateTransaction(
-                                        editedTransaction,
-                                      );
-                                      final transactions = await viewModel
-                                          .getTransactionsByDate(_selectedDate);
-                                      await viewModel.getTotalBalanceByDay(
-                                        _selectedDate,
-                                      );
+                                    }
+                                  });
+                                },
+                                onEdit: (editedTransaction) async {
+                                  // Use post frame callback to avoid setState during build
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) async {
+                                    await viewModel.updateTransaction(
+                                      editedTransaction,
+                                    );
+                                    final transactions = await viewModel
+                                        .getTransactionsByDate(_selectedDate);
+                                    await viewModel.getTotalBalanceByDay(
+                                      _selectedDate,
+                                    );
+                                    if (mounted) {
                                       setState(() {
                                         _transactionsByDate = transactions;
                                       });
-                                    },
-                                  ),
-                                )
-                                .toList(),
-                      ),
-                    ),
-                  ],
-                );
-              },
+                                    }
+                                  });
+                                },
+                              ),
+                            )
+                            .toList(),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
