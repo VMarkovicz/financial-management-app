@@ -91,7 +91,7 @@ class _SettingsViewState extends State<SettingsView> {
     return Consumer<UserViewModel>(
       builder:
           (context, userViewModel, child) => Scaffold(
-            appBar: CustomAppBar(title: "Settings", showActions: false),
+            appBar: CustomAppBar(title: "Settings", showActions: false, initialCurrency: _userViewModel.user.defaultCurrency ?? 'USD',),
             body: Column(
               children: [
                 Expanded(

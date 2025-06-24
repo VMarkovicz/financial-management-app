@@ -18,7 +18,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onCurrencyChanged,
     this.onProfileTap,
     this.onBackTap,
-    this.initialCurrency = 'USD',
+    required this.initialCurrency,
     this.showActions = true,
     this.showNavigation = true,
   });
@@ -31,13 +31,13 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  late String _selectedOption;
+  late String _selectedOption = widget.initialCurrency;
   final List<String> _options = ['USD', 'BRL', 'BTC', 'ETH'];
 
   @override
   void initState() {
     super.initState();
-    _selectedOption = widget.initialCurrency;
+    // _selectedOption = widget.initialCurrency;
   }
 
   @override
@@ -60,26 +60,26 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     widget.onBackTap ?? () => Get.back(closeOverlays: true),
                 icon: const Icon(Icons.arrow_back),
               ),
-            if (widget.showActions)
-              DropdownButton<String>(
-                value: _selectedOption,
-                underline: const SizedBox(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _selectedOption = value;
-                    });
-                    widget.onCurrencyChanged?.call(value);
-                  }
-                },
-                items:
-                    _options
-                        .map(
-                          (opt) =>
-                              DropdownMenuItem(value: opt, child: Text(opt)),
-                        )
-                        .toList(),
-              ),
+            // if (widget.showActions)
+            //   DropdownButton<String>(
+            //     value: _selectedOption,
+            //     underline: const SizedBox(),
+            //     onChanged: (value) {
+            //       if (value != null) {
+            //         setState(() {
+            //           _selectedOption = value;
+            //         });
+            //         widget.onCurrencyChanged?.call(value);
+            //       }
+            //     },
+            //     items:
+            //         _options
+            //             .map(
+            //               (opt) =>
+            //                   DropdownMenuItem(value: opt, child: Text(opt)),
+            //             )
+            //             .toList(),
+            //   ),
           ],
         ),
       ),

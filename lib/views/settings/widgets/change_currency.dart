@@ -50,30 +50,36 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        String? tempSelectedCurrency = _selectedCurrency;
         Modal.show(
           context: context,
           title: "Change Currency",
-          body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            decoration: BoxDecoration(
-              color: Color(0xFFF8F8F8),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: DropdownButton<String>(
-              value: _selectedCurrency,
-              underline: const SizedBox(),
-              onChanged: (currency) {
-                setState(() {
-                  _selectedCurrency = currency;
-                });
-              },
-              items:
-                  _options
-                      .map(
-                        (opt) => DropdownMenuItem(value: opt, child: Text(opt)),
-                      )
-                      .toList(),
-            ),
+          body: StatefulBuilder(
+            builder: (context, setModalState) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                decoration: BoxDecoration(
+                  color: Color(0xFFF8F8F8),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: DropdownButton<String>(
+                  value: tempSelectedCurrency,
+                  underline: const SizedBox(),
+                  onChanged: (currency) {
+                    setModalState(() {
+                      tempSelectedCurrency = currency;
+                    });
+                  },
+                  items:
+                      _options
+                          .map(
+                            (opt) =>
+                                DropdownMenuItem(value: opt, child: Text(opt)),
+                          )
+                          .toList(),
+                ),
+              );
+            },
           ),
           actions: [
             CustomButton(
@@ -87,8 +93,10 @@ class _ChangeCurrencyState extends State<ChangeCurrency> {
               label: 'Save',
               width: 100,
               onPressed: () {
+                setState(() {
+                  _selectedCurrency = tempSelectedCurrency;
+                });
                 _updateCurrency();
-                Get.back();
               },
             ),
           ],

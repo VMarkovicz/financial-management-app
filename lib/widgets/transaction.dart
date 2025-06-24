@@ -24,7 +24,7 @@ class TransactionWidget extends StatelessWidget {
     required this.amount,
     required this.type,
     required this.date,
-    this.currency = 'USD',
+    required this.currency,
     this.onDelete,
     this.onEdit,
   });

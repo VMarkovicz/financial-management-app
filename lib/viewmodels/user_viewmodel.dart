@@ -59,6 +59,8 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<UserModel> updateDefaultCurrency(String currency) async {
+    busy = true;
+    notifyListeners();
     final response = await _userRepository.updateDefaultCurrency(currency);
     user.defaultCurrency = response.defaultCurrency;
     Fluttertoast.showToast(
@@ -70,6 +72,7 @@ class UserViewModel extends ChangeNotifier {
       textColor: Colors.white,
       fontSize: 16.0,
     );
+    busy = false;
     notifyListeners();
     return response;
   }

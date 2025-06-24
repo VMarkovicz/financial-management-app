@@ -31,7 +31,7 @@ class _CalendarViewState extends State<CalendarView> {
     super.initState();
     _transactionsViewmodel = context.read<TransactionsViewmodel>();
     _userViewModel = context.read<UserViewModel>();
-    _selectedCurrency = _userViewModel.user.defaultCurrency ?? 'USD';
+    _selectedCurrency = _userViewModel.user.defaultCurrency;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadData();
     });
@@ -101,11 +101,13 @@ class _CalendarViewState extends State<CalendarView> {
                         ),
                         viewModel.busy
                             ? const CircularProgressIndicator()
-                            : Text(
-                              '${viewModel.totalBalanceByDay} $_selectedCurrency',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w900,
+                            : Consumer<UserViewModel>(
+                              builder: (context, userViewModel, child) => Text(
+                                '${viewModel.totalBalanceByDay} ${_userViewModel.user.defaultCurrency}',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                ),
                               ),
                             ),
                       ],
@@ -142,6 +144,7 @@ class _CalendarViewState extends State<CalendarView> {
                                 amount: transaction.amount,
                                 type: transaction.type,
                                 date: transaction.date,
+                                currency: _userViewModel.user.defaultCurrency,
                                 onDelete: () async {
                                   // Use post frame callback to avoid setState during build
                                   WidgetsBinding.instance.addPostFrameCallback((

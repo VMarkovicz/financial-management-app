@@ -33,6 +33,7 @@ class AuthService {
           id: userAuth.uid,
           username: user.username,
           email: user.email,
+          defaultCurrency: user.defaultCurrency
         );
         await _usersCollection.doc(userAuth.uid).set(userModel.toJson());
       } else {

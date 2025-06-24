@@ -87,7 +87,7 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: "Home",
-        initialCurrency: _selectedCurrency ?? 'USD',
+        initialCurrency: _userViewModel.user.defaultCurrency ?? 'USD',
         showNavigation: false,
         onCurrencyChanged: (currency) {
           setState(() {
@@ -192,7 +192,7 @@ class _HomeViewState extends State<HomeView> {
                         }
 
                         return Text(
-                          "${_transactionsViewmodel.totalMonthlyBalance} $_selectedCurrency",
+                          "${_transactionsViewmodel.totalMonthlyBalance} ${_userViewModel.user.defaultCurrency}",
                           style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w900,
@@ -227,23 +227,25 @@ class _HomeViewState extends State<HomeView> {
                       itemCount: viewModel.transactions.length,
                       itemBuilder: (context, index) {
                         final transaction = viewModel.transactions[index];
-                        return TransactionWidget(
-                          id: transaction.id,
-                          name: transaction.name,
-                          description: transaction.description,
-                          amount: transaction.amount,
-                          date: transaction.date,
-                          currency: _selectedCurrency,
-                          type: transaction.type,
-                          onDelete: () {
-                            viewModel.deleteTransaction(
-                              transaction.id,
-                              _userViewModel.updateBalance,
-                            );
-                          },
-                          onEdit: (newTransaction) {
-                            viewModel.updateTransaction(newTransaction);
-                          },
+                        return Consumer<UserViewModel>(
+                          builder: (context, userViewModel, child) => TransactionWidget(
+                            id: transaction.id,
+                            name: transaction.name,
+                            description: transaction.description,
+                            amount: transaction.amount,
+                            date: transaction.date,
+                            currency: _userViewModel.user.defaultCurrency,
+                            type: transaction.type,
+                            onDelete: () {
+                              viewModel.deleteTransaction(
+                                transaction.id,
+                                _userViewModel.updateBalance,
+                              );
+                            },
+                            onEdit: (newTransaction) {
+                              viewModel.updateTransaction(newTransaction);
+                            },
+                          ),
                         );
                       },
                       separatorBuilder: (_, __) => const SizedBox(height: 16),
